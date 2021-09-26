@@ -1,0 +1,10 @@
+{
+    "Ctrl+O":" open_file()",
+    "Ctrl+N":"create_tab()",
+    "Ctrl+T":"AutoTyping()",
+    "Ctrl+S":" saveFile(txt_editor.session.getValue())",
+    "Alt+;":"txt_size_up()",
+    "Alt+-":"txt_size_down()",
+    "Ctrl+Q":"txt_editor.showSettingsMenu()",
+    "Alt+R":"connect_remote()"
+}

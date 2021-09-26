@@ -1,0 +1,394 @@
+// アプリケーション作成用のモジュールを読み込み
+// let doc =require("../../ace/lib/ace/document.js")
+// import {ace_Document} from "./src/document.js";
+// console.log(ace_Document)
+// // C:\Users\taiki\desktop\program\elecron\150819_electron_text_editor\src\main.js
+const electron = require('electron');
+const parseArgs = require('electron-args');
+
+const cli = parseArgs(`
+    sample-app
+
+    open github or qiita
+
+    Usage
+      $ sample-app [file path]
+
+    Options
+      --help       show help
+      --version    show version
+      --userCustom,-c [custom_filename]      customfile open
+      --debug,-D        debugMode
+
+    Custom_filename
+      Partial Match
+
+    "import":window.requires.dirname+"/user_custom/py.json",
+    "type":window.requires.dirname+'/user_custom/py_type.json',
+    "shortcut":window.requires.dirname+'/user_custom/shortcut.jsonc',
+    "settings":window.requires.dirname+"/user_custom/settings.json"
+
+
+
+    Examples
+      $ sample-app test.py
+      $ sample-app -c import   === $ sample-app -c imp
+`, {
+    alias: {
+        h: 'help',
+        c: 'userCustom',
+        D: "debug",
+    },
+    default: {
+        user_custom: false,
+    }
+});
+console.log(cli.flags);
+console.log(cli.input[0]);
+const args = cli.input;
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const Menu = electron.Menu;
+// const storage = require('electron-json-storage');
+// storage.get('./py.json', function(error, data) { // 読み込みしてHTMLに書き出す
+//     if (error) throw error;
+//     console.log(data.os);
+//     console.log(data.site_url);
+// });
+const path = require('path');
+const url = require('url');
+const fs = require('fs');
+const dialog = electron.dialog;
+let currentPath = "";
+
+
+// メインウィンドウ
+let mainWindow;
+const isMac = (process.platform === 'darwin');
+function createWindow(template=null,width=800,height=600) {
+  // 'darwin' === macOS
+  //------------------------------------
+  // メニュー
+  //------------------------------------
+  // メニューを準備する
+
+  
+  // メニューを適用する
+  Menu.setApplicationMenu(template);
+  
+  // in the main process:
+  // メインウィンドウを作成します
+  win = new BrowserWindow({
+    width: width,
+    height: height,
+    webPreferences: { 
+      nodeIntegration: false, //ここはfalseのまま
+      contextIsolation: true,  //trueのまま(case2と違う)
+      preload: __dirname + '/preload.js' //preloadするjs指定
+  },
+  defaultFontSize:30
+});
+return win;
+}
+function onload(){
+  const template = Menu.buildFromTemplate([
+    ...(isMac ? [{
+        label: app.name,
+        submenu: [
+          {role:'about',      label:`${app.name}について` },
+          {type:'separator'},
+          {role:'services',   label:'サービス'},
+          {type:'separator'},
+          {role:'hide',       label:`${app.name}を隠す`},
+          {role:'hideothers', label:'ほかを隠す'},
+          {role:'unhide',     label:'すべて表示'},
+          {type:'separator'},
+          {role:'quit',       label:`${app.name}を終了`}
+        ]
+      }] : []),
+    {
+      label: 'ファイル',
+      submenu: [
+        isMac ? {role:'close', label:'ウィンドウを閉じる'} : {role:'quit', label:'終了'},
+        {        
+          label: 'Learn More',
+        click: async () => {
+          const { shell } = require('electron')
+          await shell.openExternal('https://electronjs.org')}
+        },
+        {
+          label: 'ファイルを開く',
+          click: async() =>{
+            BrowserWindow.getFocusedWindow().webContents.send('open_new_file');
+          }
+          
+        }
+      ]
+    },
+    {
+      label: '編集',
+      submenu: [
+        {role:'undo',  label:'元に戻す'},
+        {role:'redo',  label:'やり直す'},
+        {type:'separator'},
+        {role:'cut',   label:'切り取り'},
+        {role:'copy',  label:'コピー'},
+        {role:'paste', label:'貼り付け'},
+        ...(isMac ? [
+            {role:'pasteAndMatchStyle', label:'ペーストしてスタイルを合わせる'},
+            {role:'delete',    label:'削除'},
+            {role:'selectAll', label:'すべてを選択'},
+            {type:'separator' },
+            {
+              label: 'スピーチ',
+              submenu: [
+                {role:'startSpeaking', label:'読み上げを開始'},
+                {role:'stopSpeaking',  label:'読み上げを停止'}
+              ]
+            }
+          ] : [
+            {role:'delete',    label:'削除'},
+            {type:'separator'},
+            {role:'selectAll', label:'すべてを選択'}
+          ])
+       ]
+    },
+    {
+      label: '表示',
+      submenu: [
+        {role:'reload',         label:'再読み込み'},
+        {role:'forceReload',    label:'強制的に再読み込み'},
+        {role:'toggleDevTools', label:'開発者ツールを表示'},
+        {type:'separator'},
+        {role:'resetZoom',      label:'実際のサイズ'},
+        {role:'zoomIn',         label:'拡大'},
+        {role:'zoomOut',        label:'縮小'},
+        {type:'separator'},
+        {role:'togglefullscreen', label:'フルスクリーン'}
+      ]
+    },
+    {
+      label: 'ウィンドウ',
+      submenu: [
+        {role:'minimize', label:'最小化'},
+        {role:'zoom',     label:'ズーム'},
+        ...(isMac ? [
+             {type:'separator'} ,
+             {role:'front',  label:'ウィンドウを手前に表示'},
+             {type:'separator'},
+             {role:'window', label:'ウィンドウ'}
+           ] : [
+             {role:'close',  label:'閉じる'}
+           ])
+      ]
+    },
+    {
+      label:'ヘルプ',
+      submenu: [
+        {label:`${app.name} ヘルプ`},    // ToDo
+        ...(isMac ? [ ] : [
+          {type:'separator'} ,
+          {role:'about',  label:`${app.name}について` }
+        ])
+      ]
+    }
+  ]);
+
+
+  mainWindow = createWindow(template);
+  const localShortcut = require("electron-localshortcut");
+  const { ipcMain, globalShortcut } = require('electron');
+  console.log("a");
+  // console.log(globalShortcut.isRegistered('Ctrl+numsub'))
+  console.log("v");
+    // dialog.showMessageBoxSync(mainWindow,()=>{});
+  const log = require('electron-log');
+  let shortcut = JSON.parse(fs.readFileSync(__dirname+'/user_custom/shortcut.jsonc', 'utf8'));
+  for(const key of Object.keys(shortcut)){
+    localShortcut.register(mainWindow, key,()=>{
+      mainWindow.webContents.send(key);
+    });
+  }
+    localShortcut.register(mainWindow, "F12",()=>{
+        if(mainWindow.isDevToolsOpened() === true){
+            mainWindow.closeDevTools();
+        }else{
+            mainWindow.webContents.openDevTools();
+        }
+    });
+
+  ipcMain.handle("get_args",async () =>{
+    return {
+      UserCustom:cli.flags["c"], 
+      Debugflag:cli.flags["D"],
+      Others:args
+    };
+  });
+  ipcMain.handle("savefile",(event, data,path) => {
+    currentPath = path
+    const result = saveFile(data);
+    return result;
+  });
+  ipcMain.on("openLoadFile",() => {
+    dialog.showOpenDialog(
+      mainWindow,
+      // どんなダイアログを出すかを指定するプロパティ
+      {
+        properties: ['openFile'],
+        // filters: [
+        //   {
+        //     name: 'Desktop',
+        //     extensions: ['txt', 'text', 'html', 'js',"py"]
+        //   }
+        // ]
+      }).then(result => {
+        result.canceled || mainWindow.webContents.send('read_file', result.filePaths[0]);
+      })
+  });
+  
+    ipcMain.on("create_input_window",() => {
+        
+        const window = createWindow(template,250,150);
+        window.loadURL(url.format({
+            pathname: path.join(__dirname, 'input_dialog.html'),
+            protocol: 'file:',
+            slashes: true
+        }));
+        ipcMain.on("input_window_send",(e,command)=>{
+            console.log(command);
+            window.hide();
+             mainWindow.webContents.send("set_remote_command", command);
+            
+        })
+
+        
+  });
+
+/**
+ * 新規ファイルを保存します。
+ */
+ function saveNewFile(data) {
+  // writeFile("./aa.py","unk")
+  console.log("行くよ")
+  console.log(data)
+  const win = mainWindow
+  let result = dialog.showSaveDialogSync(
+    mainWindow,
+    // どんなダイアログを出すかを指定するプロパティ
+    {
+      properties: ['openFile'],
+      filters: [
+        {
+          name: 'Documents',
+          extensions: ['py']
+        }
+      ]
+    },
+  )
+  console.log(result);
+  if(result !== undefined){
+        currentPath = result;
+        writeFile(currentPath, data);
+  }
+}
+/**
+ * ファイルを書き込みます。
+ */
+ function writeFile(path, data) {
+  path.substring(path.length-3) === ".py" && pyright_check(path);
+  fs.writeFile(path, data, (error) => {
+    if (error != null) {
+      alert('error : ' + error);
+    }
+  });
+}
+/**
+ * ファイルを保存します。
+ */
+ function saveFile(data) {
+
+  //　初期の入力エリアに設定されたテキストを保存しようとしたときは新規ファイルを作成する
+  if (currentPath.indexOf("unnamed") !== -1) {
+    saveNewFile(data);
+    return currentPath;
+  }
+
+  const win = mainWindow;
+
+  // let response = dialog.showMessageBoxSync(win, {
+  //     title: 'ファイルの上書き保存を行います。',
+  //     type: 'info',
+  //     buttons: ['OK', 'Cancel'],
+  //     detail: '本当に保存しますか？'
+  //   }
+  // );
+  // console.log(response);
+  // if(response === 0){
+  // }
+  writeFile(currentPath, data);
+  console.log(currentPath);
+  return currentPath;
+  }
+function pyright_check(currentPath){
+  return true;
+  require("child_process").exec(`npx pyright ${currentPath}`, { encoding: 'Shift_JIS' },(errs,stdout,stderr)=>{
+    
+    // console.log("err"+err);
+    const Encoding = require('encoding-japanese');
+
+    stdout =Encoding.convert(stdout, { from: 'SJIS', to: 'UNICODE', type: 'string' });
+    stdout = stdout.substring(stdout.match("[1-9]+:[1-9]+").index).split("-")
+    console.log("stdout"+stdout);
+    const out = stdout;
+    
+    })
+}
+
+
+  ipcMain.handle('create_local_shk', (event, arg) => {  // channel名は「asynchronous-message」
+    console.log(arg)
+    let obj = BrowserWindow.getFocusedWindow()
+    obj = JSON.parse(JSON.stringify(obj));
+    return obj
+  })
+
+function logPosition(event) {			console.log("screenX: " + event.screenX);			console.log("screenY: " + event.screenY);		}
+electron.app.on('mousemove', logPosition);
+console.log("kaminoko")
+  
+  localShortcut.register(mainWindow, 'Ctrl+Q', function() {
+    app.quit();
+  });
+  // メインウィンドウに表示するURLを指定します
+  // （今回はmain.jsと同じディレクトリのindex.html）
+  mainWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'index.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
+
+  // メインウィンドウが閉じられたときの処理
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
+  mainWindow.on('ready-to-show', ()=>console.log("reesd"));
+}
+
+//  初期化が完了した時の処理
+app.on('ready', onload);
+
+
+// 全てのウィンドウが閉じたときの処理
+app.on('window-all-closed', () => {
+  // macOSのとき以外はアプリを終了させます
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+// アプリケーションがアクティブになった時の処理(Macだと、Dockがクリックされた時）
+app.on('activate', () => {
+  /// メインウィンドウが消えている場合は再度メインウィンドウを作成する
+  if (mainWindow === null) {
+    createWindow();
+  }
+});

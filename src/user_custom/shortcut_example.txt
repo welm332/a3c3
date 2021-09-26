@@ -1,0 +1,2 @@
+    "Ctrl+Shift+Right":"move_tab(\"right\")",
+    "Ctrl+Shift+Left":"move_tab(\"left\")",

@@ -1,0 +1,12 @@
+{
+    "defaultDebug":false,
+    "debug_open_files":[
+        "__dirname/user_custom/py.json",
+        "__dirname/user_custom/py_type.json",
+        "__dirname/user_custom/shortcut.jsonc",
+        "__dirname/user_custom/settings.json",
+        "__dirname/index.html",
+        "__dirname/editor.js",
+        "__dirname/main.js"
+        ]
+}

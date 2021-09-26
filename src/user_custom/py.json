@@ -1,0 +1,338 @@
+{
+	"os.": {
+		"name": "os.",
+		"code": "import os\n",
+		"replace": "",
+		"sule": [
+			"from os",
+			"import os"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"os.system": {
+		"name": "os.system",
+		"code": "from os import system\n",
+		"replace": "import os\n",
+		"sule": [
+			"from os import [^(\\r\\n)]*system"
+		],
+		"update": {
+			"if": "from os import",
+			"add": "system"
+		}
+	},
+	"os.rmdir": {
+		"name": "os.rmdir",
+		"code": "from os import rmdir\n",
+		"replace": "import os\n",
+		"sule": [
+			"from os import [^(\\r\\n)]*rmdir"
+		],
+		"update": {
+			"if": "from os import",
+			"add": "rmdir"
+		}
+	},
+	"os.mkdir": {
+		"name": "os.mkdir",
+		"code": "from os import mkdir\n",
+		"replace": "import os\n",
+		"sule": [
+			"from os import [^(\\r\\n)]*mkdir"
+		],
+		"update": {
+			"if": "from os import",
+			"add": "mkdir"
+		}
+	},
+	"typing.": {
+		"name": "typing.",
+		"code": "import typing\n",
+		"sule": [
+			"from typing\n",
+			"import typing\n"
+		],
+		"replace": "",
+		"update": {
+			"if": null
+		}
+	},
+	"typing.Union": {
+		"name": "typing.Union",
+		"code": "from typing import Union\n",
+		"replace": "import typing\n",
+		"sule": [
+			"from typing import [^(\\r\\n)]*Union"
+		],
+		"update": {
+			"if": "from typing import",
+			"add": "Union"
+		}
+	},
+	"sys.": {
+		"name": "sys.",
+		"code": "import sys\n",
+		"sule": [
+			"from sys\n",
+			"import sys\n"
+		],
+		"replace": "",
+		"update": {
+			"if": null
+		}
+	},
+	"threading.": {
+		"name": "threading.",
+		"code": "import threading\n",
+		"sule": [
+			"from threading",
+			"import threading"
+		],
+		"replace": "",
+		"update": {
+			"if": null
+		}
+	},
+	"threading.Thread": {
+		"name": "threading.Thread",
+		"code": "from threading import Tread\n",
+		"replace": "import threading\n",
+		"sule": [
+			"from threading import [^(\\r\\n)]*Thread"
+		],
+		"update": {
+			"if": "from threaing import",
+			"add": "Thread"
+		}
+	},
+	"time.": {
+		"name": "time.",
+		"code": "import time\n",
+		"replace": "",
+		"sule": [
+			"from time",
+			"import time"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"time.sleep": {
+		"name": "time.sleep",
+		"code": "from time import sleep\n",
+		"replace": "import time\n",
+		"sule": [
+			"from time import [^(\\r\\n)]*sleep"
+		],
+		"update": {
+			"if": "from time import",
+			"add": "sleep"
+		}
+	},
+	"pyautogui.": {
+		"name": "pyautogui.",
+		"code": "import pyautogui\n",
+		"replace": "",
+		"sule": [
+			"from pyautogui",
+			"import pyautogui"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"pgui.": {
+		"alias": "pyautogui.",
+		"name": "pgui"
+	},
+	"numpy.": {
+		"name": "numpy.",
+		"code": "import numpy\n",
+		"replace": "",
+		"sule": [
+			"from numpy",
+			"import numpy"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"np.": {
+		"alias": "numpy.",
+		"name": "np"
+	},
+	"pandas.": {
+		"name": "pandas.",
+		"code": "import pandas\n",
+		"replace": "",
+		"sule": [
+			"from pandas",
+			"import pandas"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"pd.": {
+		"alias": "pandas.",
+		"name": "pd"
+	},
+	"html:5": {
+		"name": "html:5",
+		"code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Document</title>\n</head>\n<body>\n    \n</body>\n</html>",
+		"replace": "html:5",
+		"sule": [
+			null,
+			null
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"pyclass": {
+		"name": "pyclass",
+		"code": "class %curpos%:\n\tdef __init__(self):\n\t\t",
+		"replace": "pyclass",
+		"sule": [
+			null,
+			null
+		],
+		"update": {
+			"if": null
+		},
+		"curpos_replace": {
+			"txt": "test",
+			"focused": true
+		}
+	},
+	"pysuper": {
+		"name": "pysuper",
+		"code": "class %curpos%(super):\n\tdef __init__(self):\n\t\tsuper().__init__()",
+		"replace": "pysuper",
+		"sule": [
+			null,
+			null
+		],
+		"update": {
+			"if": null
+		},
+		"curpos_replace": {
+			"txt": "sub",
+			"focused": true
+		}
+	},
+	"pymain": {
+		"name": "pymain",
+		"code": "if __name__ == \"__main__\":\n\t",
+		"replace": "html:5",
+		"sule": [
+			null,
+			null
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"pyforlen": {
+		"name": "pyforlen",
+		"code": "for i in range(len(%curpos%)):\n\t",
+		"replace": "pyforlen",
+		"sule": [
+			null,
+			null
+		],
+		"update": {
+			"if": null
+		},
+		"curpos_replace": {
+			"txt": "lis",
+			"focused": true
+		}
+	},
+	"glob.": {
+		"name": "glob.",
+		"code": "import glob\n",
+		"replace": "",
+		"sule": [
+			"from glob",
+			"import glob"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"re.": {
+		"name": "re.",
+		"code": "import re\n",
+		"replace": "",
+		"sule": [
+			"from re",
+			"import re"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"win32com.client.": {
+		"name": "win32com.client.",
+		"code": "import win32com.client\n",
+		"replace": "",
+		"sule": [
+			"from win32com.client",
+			"import win32com.client"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"PIL.Image": {
+		"name": "PIL.Image",
+		"code": "from PIL import Image\n",
+		"replace": "import PIL\n",
+		"sule": [
+			"from PIL import [^(\\r\\n)]*Image"
+		],
+		"update": {
+			"if": "from PIL import",
+			"add": "Image"
+		}
+	},
+	"PIL.": {
+		"name": "PIL.",
+		"code": "import PIL\n",
+		"replace": "",
+		"sule": [
+			"from PIL",
+			"import PIL"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"pyocr.builders.": {
+		"name": "pyocr.builders.",
+		"code": "import pyocr.builders\n",
+		"replace": "",
+		"sule": [
+			"from pyocr.builders",
+			"import pyocr.builders"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"pyocr.": {
+		"name": "pyocr.",
+		"code": "import pyocr\n",
+		"replace": "",
+		"sule": [
+			"from pyocr",
+			"import pyocr"
+		],
+		"update": {
+			"if": null
+		}
+	}
+}

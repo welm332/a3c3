@@ -1,0 +1,75 @@
+* {
+  margin: 0px;
+  padding: 0px;
+}
+.border-radius {
+  width: 10px;
+  height: 10px;
+  line-height: 200px;
+  background-color: green;
+  border-radius: 50%;
+  color: #fff;
+  text-align: center;
+  display: inline-block;
+  _display: inline;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background-color: #1e1e1e;
+  overflow: hidden;
+}
+
+/** ヘッダーが34px、フッターが20px */
+#input_area {
+  padding: 34px 0px 20px 0px;
+  height: 100%;
+}
+
+.editor {
+  width: 100%;
+  height: 87%;
+}
+
+#header_fixed {
+  position: fixed;
+  height: 34px;
+  width: 100%;
+}
+
+#footer_fixed {
+  position: fixed;
+  height: 20px;
+  width: 100%;
+  bottom: 0px;
+  background-color: #337ab7;
+  color: #eeeeee;
+}
+dialog {
+    margin-left: auto;
+    margin-right: auto;
+    width: 8em
+    /*text-align: center ;*/
+    /*border: solid 1px #aaa;*/
+    /*border-radius: 5px;*/
+    /*box-shadow: 0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0,0,0,0.3);*/
+    }
+		
+#tabs > *{
+  color:red;
+  display: inline-block;
+  _display: inline;
+  padding: 3px;
+  border: 3px outset purple;
+  ser-select: none; /* CSS3 */
+  -moz-user-select: none; /* Firefox */
+  -webkit-user-select: none; /* Safari、Chromeなど */
+  -ms-user-select: none; /* IE10かららしい */
+}
+.tab > button:not(.border-radius){
+  background-color: #1e1e1e;
+  color:white;
+  /* outline: none; */
+  border: none; 
+}

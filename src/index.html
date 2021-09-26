@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8"/>
+  <title>Electron Text Editor</title>
+  <script src="../node_modules/ace-builds/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../node_modules/ace-builds/src-min/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../node_modules/ace-builds/src-min/ext-error_marker.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../node_modules/ace-builds/src-min/ext-linking.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../node_modules/ace-builds/src-min/ext-settings_menu.js" type="text/javascript" charset="utf-8"></script>
+
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+  <link href="main.css" rel="stylesheet"/>
+  <div id="OpenFiles" type="hidden"></div>
+  <script src="editor.js"></script>
+</head>
+<body>
+  <div id="tabs">
+    <button id="tabplus">＋</button>
+  </div>
+  <br>
+  <div id="header_fixed">
+    <button type="button"
+            class="btn-sm btn-primary"
+            id="btnLoad">
+      読み込む
+    </button>
+    <button type="button"
+            class="btn-sm
+            btn-primary"
+            id="btnSave">
+      保存する
+    </button>
+  </div>
+  <div id="dialogspace"></div>
+  <div id="footer_fixed"></div>
+  <div id="input_area">
+    <!-- <div id="input_txt" data-fullpath="unnamdsafds" class="editor"></div> -->
+  </div>
+</body>
+</html>

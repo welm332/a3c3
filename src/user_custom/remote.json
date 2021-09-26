@@ -1,0 +1,20 @@
+{
+    "taro":{
+        "command":"copy %fullpath% C://Users/taiki/Desktop/program/%file%"
+    },
+    "ssh":{
+        "command":"wsl rsync -e \"ssh -p 2222 -i ~/.ssh/yes\" -av /mnt/%fullpath% splunk@localhost:/home/splunk/%file%",
+        "replace":{
+            "before":":",
+            "after":""
+        }
+    },
+    "wsl/web":{
+        "command":"wsl cp /mnt/%fullpath% /var/www/html/%file%",
+        "replace":{
+            "before":":",
+            "after":""
+        },
+        "sudo":true
+    }
+}
