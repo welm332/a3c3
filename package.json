@@ -1,18 +1,19 @@
 {
   "name": "auto3",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "main": "./src/main.js",
   "description": "Editor for Python",
   "author": "welm",
   "build": {
     "appId": "com.example.myapp",
-    "productName": "Auto3 ${os}",
+    "productName": "Auto3",
     "files": [
       "**/*"
     ]
   },
   "scripts": {
     "start": "electron .",
+    "install":"electron installer/main.js",
     "build:inst:win": "electron-builder   -w --x64",
     "build:inst:mac": "electron-builder   -m --x64",
     "build:inst:linux": "electron-builder   -l --x64",

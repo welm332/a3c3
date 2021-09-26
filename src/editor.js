@@ -5,10 +5,11 @@ let footerArea = null;
 // プログラム内の書き込み、autoimportなどの書き込みでonchangeを発生させないようにフラグを立てる
 var insert_flag = false
 let tab_widths = {};//入れ替えのための位置登録
+let tab_open_log = [];//消したとき開くのを探すため
 var text_list = {};//後日修正予定だが今のところ一つの書き込むスペースに複数のタブの値をsetvalueして使ってる,ctrl+zとかで戻すときに不具合がある
 let last_saves = {};//最後にセーブした値を覚えることで書き換えているかの判定
 let editor_dict = {};
-var tab_opend_path = "";//開いてるタブのフルパスF
+var tab_opend_path = "";//開いてるタブのフルパス
 let txt_editor = null;//エディターの要素がaceが読み込まれた後に入る
 var langTools = null;//上と同じタイミングでaceのlangtoolが入る
 var fs;//mainと通信できたタイミングでfsが入る
@@ -59,6 +60,20 @@ function create_editor(element){
   ace.require('ace/ext/settings_menu').init(txt_editor);
     return editor;
 }
+function delete_tab(event){
+    let parent = event.target.parentElement;
+    if(parent.dataset.fullpath === tab_opend_path){
+      if((index = tab_open_log.indexOf(parent.dataset.fullpath)) !== -1){
+      tab_open_log.splice(index, 1);
+      }
+      if(tab_open_log.length > 0){
+        get_focus(tab_open_log[0]);
+        }
+      }
+    parent.remove();
+    remove_tab_info(parent.textContent);
+    event.stopPropagation();
+        }
 function create_input_dialog(){
     const dialog = document.createElement('dialog');
     const form = document.createElement('form');
@@ -85,62 +100,46 @@ function create_input_dialog(){
 }
 function create_search_window(){//検索窓の作成
   let div = document.createElement('div');
-  div.style.right = "0px";
+  div.style.left = "50%";
   div.style.position = 'absolute';
-  div.style.top = "0px";
+  div.style.top = "5%";
   div.style.zIndex = 2147483647;
+  div.style.marginRight = "-50%";
+  div.style.transform = "translate(-50%, -50%)";
+  
+  const palette_commands = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/palette_commands.json', 'utf8'));
+  const datalist = document.createElement("datalist");
+  datalist.id = "commandLists";
+  for(const key of Object.keys(palette_commands)){
+      
+      
+    const option = document.createElement("option");
+    option.value = key;
+    
+    datalist.appendChild(option);
+  }
+  
+    document.getElementById("datalist").appendChild(datalist);
+  
   let txt_em = document.createElement('input');
   txt_em.type = "text";
-  txt_em.oninput = function(event) {
-    let searchValue =event.target.value;
-    const full_text = txt_editor.session.getValue();
-    let list = [];
-    let index = 0;
-    if(searchValue !== ""){
-      while(true){
-        const i = full_text.indexOf(searchValue, index);
-        if(i === -1){
-          break;
-        }
-        list.push(i);
-        index = ( i +  searchValue.length)
-      }
-      console.log(list);
-      event.target.dataset.rsult_lists = list.join(',');
-      if(event.target.dataset.index === undefined){
-        event.target.dataset.index = -1;
-      }
-    }
-  }
+  
+  txt_em.setAttribute("list", "commandLists");
   txt_em.onkeypress=
     function (event) {
-      console.log(event.key)
       if (event.key === "Enter") {
-        const target = event.target;
-        if(target.dataset.rsult_lists !== undefined){
-          const list = target.dataset.rsult_lists.split(",");
-          let index = Number(target.dataset.index);
-          index++;
-          if(list.length > index){
-            target.dataset.index = index;
-            console.log(list[index]);
-          }else{
-            index = 0;
-            target.dataset.index = 0;
-            console.log(list[0]);
+          const key = event.target.value;
+          const palette_commands = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/palette_commands.json', 'utf8'));
+          if(palette_commands[key] !== undefined){
+              eval(palette_commands[key]);
+              delete_tab(event);
           }
-          txt_editor.moveCursorToPosition(postionToIdnex(txt_editor.session.getValue(), list[index]));
-
-        }
     }  
   }
 
   let button_em = document.createElement('button');
   button_em.innerHTML = "X";
-  button_em.onclick = function(event) {
-    event.target.parentElement.remove();
-
-  }
+  button_em.onclick = delete_tab;
   div.appendChild(txt_em);
   div.appendChild(button_em);
 
@@ -456,6 +455,11 @@ function create_tab(){
   new_editor.className = "editor";
   // txt_editor.session.setValue("");
   new_tab.onclick = function(){
+    if((index = tab_open_log.indexOf(this.dataset.fullpath)) !== -1){
+        tab_open_log.splice(index, 1);
+        
+    }
+        tab_open_log.unshift(this.dataset.fullpath);
     get_focus(this.dataset.fullpath);
   };
   new_tab.onmouseover = function(){
@@ -552,15 +556,7 @@ function create_tab(){
   cust_onchange_on();
   // txt_editor.session.setValue("auofhewaofhewfhejpfiewpfewpfiewfewpfeijfepifjepj");
   tab_widths[`unnamed${i}`] = gettabwidth(new_tab);
-  new_tab.querySelector("button").onclick = function(event){
-    console.log("消そうとしたのね？？");
-    console.log(this);
-    let parent = this.parentElement;
-    console.log(parent.textContent);
-    parent.remove();
-    remove_tab_info(parent.textContent);
-    event.stopPropagation();
-  }
+  new_tab.querySelector("button").onclick = delete_tab;
   // cust_onchange_on();
   return new_tab;
 }
@@ -1040,12 +1036,7 @@ function saveFile(saveValue) {
       const textContent = tab.dataset.fullpath;
       if(textContent === tab_opend_path){
         tab.innerHTML = window.requires.path.basename(path.replaceAll("\\", "/"))+"<button class='delete'>X</button>";
-        tab.querySelector("button").onclick = function(event){
-          let parent = this.parentElement;
-          parent.remove();
-          remove_tab_info(parent.textContent);
-          event.stopPropagation();
-        }
+        tab.querySelector("button").onclick = delete_tab;
         path = path.replaceAll("\\", "/");
         tab.dataset.fullpath  = path;
         break;
@@ -1260,12 +1251,7 @@ function readFile(path, replacement = tab_opend_path) {
     tab.dataset.fullpath = path;
     tab.title = path;
     tab.innerHTML = window.requires.path.basename(path.replaceAll("\\", "/"))+"<button class='delete'>X</button>";
-    tab.querySelector("button").onclick = function(event){
-        let parent = this.parentElement;
-        parent.remove();
-        remove_tab_info(parent.textContent);
-        event.stopPropagation();
-        } 
+    tab.querySelector("button").onclick = delete_tab;
     }
 
   // フッター部分に読み込み先のパスを設定する

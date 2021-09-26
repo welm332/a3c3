@@ -28,7 +28,7 @@ console.log(Platform)
   targets: Platform.WINDOWS.createTarget(),
   config: {
     "appId": "com.example.myapp",
-    "productName": "Auto3 win",
+    "productName": "Auto3",
     "files": [
       "**/*"
     ]

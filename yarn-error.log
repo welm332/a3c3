@@ -1,20 +1,20 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\taiki\scoop\apps\yarn\current\Yarn\bin\yarn.js run build:inst
+  C:\Program Files\nodejs\node.exe C:\Users\taiki\scoop\apps\yarn\current\Yarn\bin\yarn.js run install
 
 PATH: 
-  C:\Program Files\Microsoft VS Code\bin;C:\Windows\System32;C:\Windows;C:\Windows\System32\wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\Tesseract-OCR;C:\Program Files\PostgreSQL\11\bin;C:\Program Files\dotnet\;C:\Program Files (x86)\dotnet\;C:\Users\taiki\Desktop\program\file_bat;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\GnuPG\bin;C:\ProgramData\chocolatey\lib\gsudo\bin\;C:\Program Files (x86)\VDesk;C:\Program Files (x86)\VDesk;C:\Program Files\Git\cmd;C:\Program Files\Go\bin;C:\Program Files\nodejs\;C:\Users\taiki\scoop\apps\postgresql\current\bin;C:\Users\taiki\scoop\apps\python\current\Scripts;C:\Users\taiki\scoop\apps\python\current;C:\Users\taiki\scoop\apps\ruby\current\bin;C:\Users\taiki\scoop\apps\ruby\current\gems\bid;C:\Users\taiki\scoop\apps\yarn\current\global\node_modules\.bin;C:\Users\taiki\scoop\apps\yarn\current\Yarn\bin;C:\Users\taiki\scoop\shims;C:\Users\taiki\.pyenv\pyenv-win\shims;C:\Users\taiki\.pyenv\pyenv-win\bin;C:\Python39;C:\Python39\Scripts;C:\Program Files\Tesseract-OCR;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\;C:\MinGW\bin;C:\Users\taiki\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\Nmap;C:\Users\taiki\Desktop\python\kansu;C:\Users\taiki\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Python 3.8;C:\Program Files\java\jdk-14.0.1\bin;C:\Users\taiki\eclipse;C:\Users\taiki\.dotnet\tools;C:\Users\taiki\AppData\Local\GitHubDesktop\bin;C:\Users\taiki\go\bin;C:\Users\taiki\Documents\GitHub\badwords\node_modules\.bin;C:\Users\taiki\Documents\39927\node_modules\.bin;C:\Program Files\heroku\bin;C:\Users\taiki\AppData\Local\Microsoft\WindowsApps;C:\Users\taiki\go\bin;C:\Users\taiki\go\bin;C:\Users\taiki\.pyenv\pyenv-win\bin;C:\Users\taiki\.pyenv\pyenv-win\shims;C:\Users\taiki\go\bin;C:\Users\taiki\AppData\Roaming\npm;C:\Users\taiki\.pyenv\pyenv-win\bin;C:\Users\taiki\.pyenv\pyenv-win\shims
+  C:\Python39\Scripts\;C:\Python39\;C:\Program Files\Microsoft VS Code\bin;C:\Windows\System32;C:\Windows;C:\Windows\System32\wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\Tesseract-OCR;C:\Program Files\PostgreSQL\11\bin;C:\Program Files\dotnet\;C:\Program Files (x86)\dotnet\;C:\Users\taiki\Desktop\program\file_bat;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\GnuPG\bin;C:\ProgramData\chocolatey\lib\gsudo\bin\;C:\Program Files (x86)\VDesk;C:\Program Files (x86)\VDesk;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\Amazon\SessionManagerPlugin\bin\;C:\Program Files\Git\cmd;C:\Program Files\Go\bin;C:\Program Files\nodejs\;C:\Users\taiki\scoop\apps\postgresql\current\bin;C:\Users\taiki\scoop\apps\python\current\Scripts;C:\Users\taiki\scoop\apps\python\current;C:\Users\taiki\scoop\apps\ruby\current\bin;C:\Users\taiki\scoop\apps\ruby\current\gems\bid;C:\Users\taiki\scoop\apps\yarn\current\global\node_modules\.bin;C:\Users\taiki\scoop\apps\yarn\current\Yarn\bin;C:\Users\taiki\scoop\shims;C:\Users\taiki\.pyenv\pyenv-win\shims;C:\Users\taiki\.pyenv\pyenv-win\bin;C:\Program Files\Tesseract-OCR;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\;C:\MinGW\bin;C:\Users\taiki\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\Nmap;C:\Users\taiki\Desktop\python\kansu;C:\Users\taiki\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Python 3.8;C:\Program Files\java\jdk-14.0.1\bin;C:\Users\taiki\eclipse;C:\Users\taiki\.dotnet\tools;C:\Users\taiki\AppData\Local\GitHubDesktop\bin;C:\Program Files\heroku\bin;C:\Users\taiki\go\bin;C:\Users\taiki\AppData\Roaming\npm;C:\test;C:\Users\taiki\AppData\Local\Programs\auto3;C:\Users\taiki\Desktop\program\portfolio\150819_electron_text_editor\dist\win-unpacked
 
 Yarn version: 
   1.22.5
 
 Node version: 
-  16.4.0
+  16.10.0
 
 Platform: 
   win32 x64
 
 Trace: 
-  SyntaxError: C:\Users\taiki\desktop\program\portfolio\150819_electron_text_editor\package.json: Unexpected token { in JSON at position 212
+  SyntaxError: C:\Users\taiki\desktop\program\portfolio\150819_electron_text_editor\package.json: Unexpected string in JSON at position 331
       at JSON.parse (<anonymous>)
       at C:\Users\taiki\scoop\apps\yarn\1.22.5\Yarn\lib\cli.js:1625:59
       at Generator.next (<anonymous>)
@@ -24,31 +24,26 @@ Trace:
 npm manifest: 
   {
     "name": "auto3",
-    "version": "0.0.1",
+    "version": "1.3.0",
     "main": "./src/main.js",
     "description": "Editor for Python",
     "author": "welm",
     "build": {
       "appId": "com.example.myapp",
       "productName": "Auto3",
-      "win"{
-        "ignore":[
-          "dist/**/*",
-          "test/**/*",
-          ".git/**/*",
-          ".gitignore"
-          ]
-      },
       "files": [
         "**/*"
       ]
     },
     "scripts": {
       "start": "electron .",
-      "build:pack": "electron-builder --dir  -w --x64",
-      "build:inst": "electron-builder   -w --x64",
+      "install":"electron installer/main.js"
+      "build:inst:win": "electron-builder   -w --x64",
+      "build:inst:mac": "electron-builder   -m --x64",
+      "build:inst:linux": "electron-builder   -l --x64",
       "pack": "electron-builder --dir",
-      "dist": "electron-builder"
+      "dist": "electron-builder",
+      "test": "dir && setx kaminoko kaminoko"
     },
     "devDependencies": {
       "electron": "^13.2.1",
@@ -59,10 +54,13 @@ npm manifest:
       "electron-args": "^0.1.0",
       "electron-json-storage": "^4.5.0",
       "electron-localshortcut": "^3.2.1",
+      "electron-log": "^4.4.1",
       "electron-winstaller": "^5.0.0",
       "encoding-japanese": "^1.0.30",
       "fs": "^0.0.1-security",
-      "pyright": "^1.1.162"
+      "pyright": "^1.1.162",
+      "sudo-prompt": "^9.2.1",
+      "windows-shortcuts-ps": "^1.0.1"
     },
     "private": true
   }
@@ -861,6 +859,11 @@ Lockfile:
       electron-is-accelerator "^0.1.0"
       keyboardevent-from-electron-accelerator "^2.0.0"
       keyboardevents-areequal "^0.2.1"
+  
+  electron-log@^4.4.1:
+    version "4.4.1"
+    resolved "https://registry.yarnpkg.com/electron-log/-/electron-log-4.4.1.tgz#28ebeb474eccba2ebf194a96c40d6328e5353e4d"
+    integrity sha512-nK/DwxPLtwWbggPCm27eMQhYHc3gzoZ+cokBK99diO4WsZJKrv5l44EUW8mRfWpmC8ZubnMyp6GTUIJyTc9AJA==
   
   electron-publish@22.11.7:
     version "22.11.7"
@@ -1869,6 +1872,11 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
     integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
   
+  sudo-prompt@^9.2.1:
+    version "9.2.1"
+    resolved "https://registry.yarnpkg.com/sudo-prompt/-/sudo-prompt-9.2.1.tgz#77efb84309c9ca489527a4e749f287e6bdd52afd"
+    integrity sha512-Mu7R0g4ig9TUuGSxJavny5Rv0egCEtpZRNMrZaYS1vxkiIxGiGUwoezU3LazIQ+KE04hTrTfNPgxU5gzi7F5Pw==
+  
   sumchecker@^3.0.1:
     version "3.0.1"
     resolved "https://registry.yarnpkg.com/sumchecker/-/sumchecker-3.0.1.tgz#6377e996795abb0b6d348e9b3e1dfb24345a8e42"
@@ -2057,6 +2065,11 @@ Lockfile:
     integrity sha512-NsmoXalsWVDMGupxZ5R08ka9flZjjiLvHVAWYOKtiKM8ujtZWr9cRffak+uSE48+Ob8ObalXpwyeUiyDD6QFgg==
     dependencies:
       string-width "^4.0.0"
+  
+  windows-shortcuts-ps@^1.0.1:
+    version "1.0.1"
+    resolved "https://registry.yarnpkg.com/windows-shortcuts-ps/-/windows-shortcuts-ps-1.0.1.tgz#275028287444bb7b4240a6cc6ada503653ec5472"
+    integrity sha1-J1AoKHREu3tCQKbMatpQNlPsVHI=
   
   wrap-ansi@^7.0.0:
     version "7.0.0"

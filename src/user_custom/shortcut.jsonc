@@ -6,5 +6,6 @@
     "Alt+;":"txt_size_up()",
     "Alt+-":"txt_size_down()",
     "Ctrl+Q":"txt_editor.showSettingsMenu()",
-    "Alt+R":"connect_remote()"
+    "Alt+R":"connect_remote()",
+    "Ctrl+Alt+P":"create_search_window()"
 }
