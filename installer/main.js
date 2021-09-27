@@ -48,7 +48,15 @@ function onload(){
   ipcMain.on("install",(e,path,checked)=>{
       console.log(path,checked)
       const exec = require("child_process").exec;
-      exec(`yarn run pack  --prepackaged ${path}`,(a,b,c)=>{
+      const fs = require("fs");
+      const filename = `${__dirname}/../package.json`;
+      const json = JSON.parse(fs.readFileSync(filname));
+      json["build"]["directories"]= {};
+      json["build"]["directories"]["output"]  = path;
+      fs.writeFileSync(filname, JSON.stringify(json, null, "\t"))
+      
+    //   return
+      exec(`yarn run pack  `,(a,b,c)=>{
           console.log(a);
           console.log(b);
           console.log(c);

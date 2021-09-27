@@ -13,9 +13,11 @@ function add_env(key="path", value="C:\\hogehoge"){
     //     return new Promise((resolve, reject)=>{get_env(resolve, reject, key)})
     // }
     get_env(key).then((path)=>{
-        const addedenv = `${path};${value}`;
-        console.log(addedenv)
-        childProcess.exec(`reg add "HKEY_CURRENT_USER\\Environment" /f /v ${key} /d "${addedenv}"`,()=>{})
+        if(path.indexOf(value) === -1){
+            const addedenv = `${path};${value}`;
+            console.log(addedenv)
+            childProcess.exec(`reg add "HKEY_CURRENT_USER\\Environment" /f /v ${key} /d "${addedenv}"`,()=>{})
+        }
     })
     // // const path = get_env(key);
     // if(path === undefined){
