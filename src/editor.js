@@ -1,5 +1,4 @@
 //要素=htmlの要素
-console.log("kajetpeo")
 let inputArea = null;
 let footerArea = null;
 // プログラム内の書き込み、autoimportなどの書き込みでonchangeを発生させないようにフラグを立てる
@@ -19,12 +18,32 @@ let input_int = false;//typingを追記しないように後日使用予定
 let select_tab = "";//開いてるタブの要素
 let debugMode = false;
 let onctrl = false;
+var chileds;
+function parseElement(emstr){
+    if(emstr[0] !== "<" || emstr[emstr.length-1] !== ">"){
+        return false
+    }
+    emstr = emstr.substr(1)
+    // while(emstr.indexOf(" =") !== -1 || emstr.indexOf("= ") !== -1 )
+    emstr  = emstr.replaceAll(" =","=").replaceAll("= ","=");
+    const settings = emstr.split(" ");
+    const em = document.createElement(settings[0]);
+    for(let i=1,len=settings.length;i<len;i++){
+        if(settings[i] === ">" || settings[i] ===`</${settings[0]}>`){
+            break;
+        }
+        [a,b] = settings[i].split("=");
+        if(b.indexOf("\"") !== -1){
+            b = b.replaceAll("\"", "");
+        }
+        em.setAttribute(a,b);
+    }
+    console.log(em);
+}
 window.addEventListener('DOMContentLoaded', onLoad);
 function Onchange(event) {
   if(input_int) return;//現状意味無い
   let tab = document.querySelector(`.tab[data-fullpath="${tab_opend_path}"]`);
-  console.log(last_saves[tab_opend_path]);
-  console.log(txt_editor.session.getValue());
   if(txt_editor.session.getValue() !== last_saves[tab_opend_path]){//追記していたらタブ内に表示されセーブできるようになる
         if(tab.innerHTML.indexOf("border-radius") === -1){
           tab.querySelector("button").innerHTML = "<div class='border-radius'></div>";      
@@ -74,6 +93,75 @@ function delete_tab(event){
     remove_tab_info(parent.textContent);
     event.stopPropagation();
         }
+function loadhtml(element, path){
+    ace.edit(element).destroy();
+    const read = window.requires.fs.readFileSync(window.requires.dirname+path, 'utf8');
+    console.log(read)
+    const domparser = new DOMParser();
+    const html = domparser.parseFromString(read, "text/html");
+    console.log(html.body)
+    
+    
+    const clone = element.cloneNode( false ); //ガワだけ複製して…
+    element.parentNode.replaceChild( clone , element ); //すげ替え。
+    // clone.appendChild(html.body);
+    // return
+    chileds = html.body.children;
+    console.log(chileds)
+    for(let i=0,len=chileds.length;i<len;i++){
+        clone.appendChild(chileds[i]);
+    }
+}
+function open_setting_page(){
+    
+    const em = create_tab();
+    const editor = document.querySelector(`.editor[data-fullpath="${em.dataset.fullpath}"]`);
+    loadhtml(editor, "/setting.html");
+    
+    return ;
+    const div = document.createElement("div");
+    // frame.id = "setting_page";
+    // frame.title = "設定ページ";
+    div.style.width = "100%";
+    div.style.height = "100%";
+    // frame.src  = window.requires.dirname+"/setting.html";
+    const settings = ["文字サイズ","テーマ","文字の色","画面サイズ"];
+    for(const title of settings){
+        const input = document.createElement("input");
+        const div_em = document.createElement("div");
+        div_em.style.color = "white";
+        const br = document.createElement("br");
+        div_em.textContent = title;
+        div.appendChild(div_em);
+        div.appendChild(input);
+        div.appendChild(br);
+        
+    }
+    
+    for(const child of document.body.children){
+        child.style.display = "none";
+    }
+    const button  = document.createElement("button");
+    button.textContent = "X";
+    button.onclick = (event)=>{
+        div.remove();
+        for(const child of document.body.children){
+            child.style.display = "";
+        }
+        event.target.remove();
+    };
+    button.style.position = "absolute";
+    button.style.top= "10px";
+    button.style.right = "10px";
+    button.style.zIndex = 2147483647;
+    document.body.appendChild(button);
+    document.body.appendChild(div);
+    // document.body.style.backgroundcolor = ""
+
+    
+    // frame.allow="fullscreen";
+    // frame.requestFullscreen();
+}
 function create_input_dialog(){
     const dialog = document.createElement('dialog');
     const form = document.createElement('form');
@@ -570,46 +658,18 @@ function AutoTyping() {
   if(debugMode) return false
   let now_line = txt_editor.session.getLine(txt_editor.getCursorPosition().row);
   let var_names = now_line.split("=")[0].split(",");
-  let values = now_line.split("=")[1].trim();
-  console.log(get_iterable(values))
-  // return;
-  let lists = [];
-  // 配列があったら「,」区切りじゃなくまとめて一つにする
-  values = txt_editor.getValue().substring(indexToPosition(txt_editor.session.getValue(),{row:txt_editor.getCursorPosition().row,column:0})).split("=")[1].trim();
-  while(true) {
-    console.log(values);
-    const index = get_iterable(values);
-    console.log(index);
-    if(index === false){
-      // return
-      break;
-    }
-
-    const item = values.substring(index.start, index.end+1);
-    values = values.substring(0,index.start) + `%list${lists.length}` + values.substring(index.end+1)
-    lists.push(item);
-    console.log(values);
-    console.log(item);
-    console.log(lists);
-    // return;
-  }
-  values = values.split(",");
-  console.log(values);
-  for(let i=0,length=lists.length;i<length;i++){
-    values[values.indexOf(`%list${i}`)]= lists[i];
-  }
-  console.log(values);
+  let values = txt_editor.getValue().substring(indexToPosition(txt_editor.session.getValue(),{row:txt_editor.getCursorPosition().row,column:0})).split("=")[1];
+  console.log(values)
+  values = analyze_valable(values);
   let type_and_names = [];
   let imports = [];
   for(let i=0,length=var_names.length;i<length;i++){
     // console.log(var_names[i]);
     // console.log(values[i]);
-    let index = get_iterable(values[i]);
     let type = get_type(values[i].trim());
-    if (index !== false){
-      type = analyze_iterator(values[i].substring(index.start, index.end+1));
+    if(type == "list" || type === "tuple"){
+      type = analyze_iterator(values[i].trim());
     }
-    console.log(type)
     if(Object.prototype.toString.call(type) === "[object String]"){
       type_and_names.push({"var_name":var_names[i].trim(), "type":type});
     }else{
@@ -834,6 +894,49 @@ function open_file(){
   // footerArea.innerHTML = path;
   // txt_editor.setValue(text, -1);
 }
+
+function analyze_valable(text) {
+  let values = [];
+  let value = "";
+  let left_dict = ["[","{","("];
+  let right_dict = ["]","}",")"];
+  let iterable_counts = {"[":0,"{":0,"(":0};
+  let type_list = ["list","dict","tuple"];
+  for(let i = 0,len=text.length;i<len;i++){
+    
+    const char = text[i];
+    console.log(iterable_counts);
+    if(left_dict.indexOf(char) !== -1) {
+        iterable_counts[char]++;
+        value += char;
+    }
+    else if(char === ","){
+        if(Object.values(iterable_counts).reduce((sum,elm)=>{return sum+elm},0) %2 === 0){
+            values.push(value);
+            value = "";
+        }else{
+            value += char;
+        }
+      }else if(right_dict.indexOf(char) !== -1) {
+        iterable_counts[left_dict[right_dict.indexOf(char)]]--;
+        value += char;
+      }else if(char === "\n"){
+          if(Object.values(iterable_counts).reduce((sum,elm)=>{return sum+elm},0) %2 === 0){
+              values.push(value);
+              console.log(values)
+              return values;
+          }
+      }else if(["\r"," ","\t"].indexOf(char) === -1){
+            value += char;
+      }
+      console.log(values)
+  }
+}
+
+
+
+
+
 function analyze_iterator(text) {
   let char_dict = ["'",'"'];
   let children = [];

@@ -1,5 +1,6 @@
 {
     "Transform To UpperCase":"const selection = txt_editor.getSelectedText();\nconst upper = selection.toUpperCase();\ntxt_editor.session.replace(txt_editor.getSelectionRange(), upper);",
-    "Transform To LowerCase":"const selection = txt_editor.getSelectedText();\nconst upper = selection.toLowerCase();\ntxt_editor.session.replace(txt_editor.getSelectionRange(), upper);"
+    "Transform To LowerCase":"const selection = txt_editor.getSelectedText();\nconst upper = selection.toLowerCase();\ntxt_editor.session.replace(txt_editor.getSelectionRange(), upper);",
+    "select len":"const selection = txt_editor.getSelectedText();alert(`選択した文字の長さは${selection.length}です`)"
 
 }
