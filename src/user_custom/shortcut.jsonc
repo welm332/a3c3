@@ -7,5 +7,7 @@
     "Alt+-":"txt_size_down()",
     "Ctrl+Q":"txt_editor.showSettingsMenu()",
     "Alt+R":"connect_remote()",
-    "Ctrl+Alt+P":"create_search_window()"
+    "Ctrl+Alt+P":"create_search_window()",
+    "Ctrl+Shift+S":"play_tab()"
+    
 }

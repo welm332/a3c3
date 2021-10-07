@@ -1,0 +1,43 @@
+{
+	"os.": {
+		"name": "os.",
+		"code": "import os\n",
+		"replace": "",
+		"sule": [
+			"from os",
+			"import os"
+		],
+		"update": {
+			"if": null
+		}
+	},
+    "os.system": {
+		"name": "os.system",
+		"code": "from os import system\n",
+		"replace": "import os\n",
+		"sule": [
+			"from os import [^(\\r\\n)]*system"
+		],
+		"update": {
+			"if": "from os import",
+			"add": "system"
+		}
+	},
+    "numpy.": {
+		"name": "numpy.",
+		"code": "import numpy\n",
+		"replace": "",
+		"sule": [
+			"from numpy",
+			"import numpy"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"np.": {
+		"alias": "numpy.",
+		"name": "np"
+	}
+	
+}

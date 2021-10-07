@@ -1,6 +1,6 @@
 {
 	"name": "auto3",
-	"version": "1.3.0",
+	"version": "1.4.2",
 	"main": "./src/main.js",
 	"description": "Editor for Python",
 	"author": "welm",
@@ -11,7 +11,10 @@
 			"**/*"
 		],
 		"directories": {
-			"output": "C:\\Users\\taiki\\Downloads\\sc\\login"
+			"output": "C:\\Users\\taiki\\Desktop\\browsers"
+		},
+		"win": {
+			"icon": "auto3.png"
 		}
 	},
 	"scripts": {

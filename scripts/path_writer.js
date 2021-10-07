@@ -1,3 +1,13 @@
+const value = process.argv[3];
+const key = process.argv[2];
+// get_env(key).then((path)=>{
+//         if(`${path};`.indexOf(`${value};`) === -1){
+//         const addedenv = path !== null ? `${path};${value}`:value ;
+//         add_env(key, addedenv);
+//     }
+// })
+const platform = process.platform
+
 async function  get_env(key="path"){
     const util = require('util');
     const childProcess = require('child_process');
@@ -12,19 +22,16 @@ async function  get_env(key="path"){
         
     }
 }
-function add_env(key="path", value="C:\\hogehoge"){
+async function add_env(key="path", value="C:\\hogehoge"){
     const childProcess = require('child_process');
     // const process = (key)=>{
     //     return new Promise((resolve, reject)=>{get_env(resolve, reject, key)})
     // }
-    get_env(key).then((path)=>{
-        if(`${path};`.indexOf(`${value};`) === -1){
-            console.log(path);
-            const addedenv = path !== null ? `${path};${value}`:value ;
-            console.log(addedenv)
-            childProcess.exec(`reg add "HKEY_CURRENT_USER\\Environment" /f /v ${key} /d "${addedenv}"`,()=>{})
+    const path = await get_env(key);
+    if(`${path};`.indexOf(`${value};`) === -1){
+        const addedenv = path !== null ? `${path};${value}`:value ;
+        childProcess.exec(`reg add "HKEY_CURRENT_USER\\Environment" /f /v ${key} /d "${addedenv}"`,()=>{})
         }
-    })
     // // const path = get_env(key);
     // if(path === undefined){
     //     function loop(){
@@ -35,7 +42,8 @@ function add_env(key="path", value="C:\\hogehoge"){
     // }
     // const addedenv = `${path};${value}`;
     // console.log(`reg add "HKEY_CURRENT_USER\\Environment" /v ${key} /d ${addedenv}`)
-    
 }
-add_env(process.argv[2], process.argv[3]);
+exports["get_env"]= get_env
+exports["add_env"]= add_env
+
 // console.log(process.argv)

@@ -50,10 +50,11 @@ function onload(){
       const exec = require("child_process").exec;
       const fs = require("fs");
       const filename = `${__dirname}/../package.json`;
-      const json = JSON.parse(fs.readFileSync(filname));
+    //   console.log(filename)
+      const json = JSON.parse(fs.readFileSync(filename));
       json["build"]["directories"]= {};
       json["build"]["directories"]["output"]  = path;
-      fs.writeFileSync(filname, JSON.stringify(json, null, "\t"))
+      fs.writeFileSync(filename, JSON.stringify(json, null, "\t"))
       
     //   return
       exec(`yarn run pack  `,(a,b,c)=>{
@@ -61,7 +62,9 @@ function onload(){
           console.log(b);
           console.log(c);
       });
-      exec(`node ${__dirname}/../scripts/path_writer.js path ${path}`);
+      if(checked){
+        exec(`node ${__dirname}/../scripts/path_writer.js path ${path}`);
+      }
       
   }
       )

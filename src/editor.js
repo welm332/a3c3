@@ -2,7 +2,7 @@
 let inputArea = null;
 let footerArea = null;
 // プログラム内の書き込み、autoimportなどの書き込みでonchangeを発生させないようにフラグを立てる
-var insert_flag = false
+var insert_flag = false;
 let tab_widths = {};//入れ替えのための位置登録
 let tab_open_log = [];//消したとき開くのを探すため
 var text_list = {};//後日修正予定だが今のところ一つの書き込むスペースに複数のタブの値をsetvalueして使ってる,ctrl+zとかで戻すときに不具合がある
@@ -19,6 +19,38 @@ let select_tab = "";//開いてるタブの要素
 let debugMode = false;
 let onctrl = false;
 var chileds;
+function play_tab(){
+    window.requires.exe.exec(`python ${tab_opend_path}`,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{
+                  info_in_footer(stdout.replaceAll("\\\\","/"),5000);
+          
+                  })
+}
+    
+function close_saving(){
+    const file_saving_dict  = {};
+    for(const tab of document.querySelectorAll(".tab")){
+        const fileName = tab.dataset.fullpath;
+        const lastsave = last_saves[fileName];
+        const writeend = editor_dict[fileName].session.getValue();
+        file_saving_dict[fileName] = {
+            "lastsave":lastsave,
+            "writeend":writeend
+        }
+    }
+    fs.writeFile(window.requires.dirname+"/.backup/save.json", JSON.stringify(file_saving_dict, null, "\t"), (error) => {
+    if (error != null) {
+      alert('error : ' + error);
+    }
+  });
+
+    
+}
+function info_in_footer(text,time=2000){
+    const before_text = footerArea.textContent;
+    footerArea.textContent = text;
+    setTimeout(()=>{footerArea.textContent = before_text;},time);
+    
+}
 function parseElement(emstr){
     if(emstr[0] !== "<" || emstr[emstr.length-1] !== ">"){
         return false
@@ -905,7 +937,7 @@ function analyze_valable(text) {
   for(let i = 0,len=text.length;i<len;i++){
     
     const char = text[i];
-    console.log(iterable_counts);
+    console.log(char);
     if(left_dict.indexOf(char) !== -1) {
         iterable_counts[char]++;
         value += char;
@@ -931,6 +963,7 @@ function analyze_valable(text) {
       }
       console.log(values)
   }
+  return values.concat([value]);
 }
 
 
@@ -1239,6 +1272,10 @@ function onLoad() {
         }
       }
       console.log(args);
+      backup_file = window.requires.dirname+"/.backup/save.json";
+      if(fs.existsSync(backup_file)){
+          args["Others"] = args["Others"].concat(Object.keys(JSON.parse(fs.readFileSync(backup_file, "utf8"))));
+      }
       if(args["Others"].length !== 0){
         let first_flag = true;
         for(let fpath of args["Others"]){
@@ -1272,6 +1309,16 @@ function onLoad() {
         create_tab();
         get_focus("unnamed1");
       }
+      if(fs.existsSync(backup_file)){
+          const dict = JSON.parse(fs.readFileSync(backup_file, "utf8"));
+          for(const key of Object.keys(dict)){
+               editor_dict[key].session.setValue(dict[key]["writeend"])
+          }
+              
+          }
+          
+          
+      
     });
     // shorthcut 作成 デバッグモードでは使用しないよう
     if(debugMode === false){
