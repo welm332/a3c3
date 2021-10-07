@@ -98,8 +98,8 @@ function Onchange(event) {
 function create_editor(element){
   const editor = ace.edit(element);
   editor.setTheme("ace/theme/twilight");
-  editor.session.setMode("ace/mode/python");
   ace.require("ace/ext/language_tools");
+  editor.session.setMode("ace/mode/python");
   editor.setOptions({
     enableBasicAutocompletion:true,
     enableSnippets:true,
@@ -1310,11 +1310,12 @@ function onLoad() {
         get_focus("unnamed1");
       }
       if(fs.existsSync(backup_file)){
+          cust_onchange_off();
           const dict = JSON.parse(fs.readFileSync(backup_file, "utf8"));
           for(const key of Object.keys(dict)){
-               editor_dict[key].session.setValue(dict[key]["writeend"])
-          }
-              
+               editor_dict[key].session.setValue(dict[key]["writeend"]);
+                }
+              cust_onchange_on();
           }
           
           

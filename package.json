@@ -42,6 +42,7 @@
 		"fs": "^0.0.1-security",
 		"pyright": "^1.1.162",
 		"sudo-prompt": "^9.2.1",
+		"update": "^0.7.4",
 		"windows-shortcuts-ps": "^1.0.1"
 	},
 	"private": true
