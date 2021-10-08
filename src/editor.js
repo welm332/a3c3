@@ -23,7 +23,7 @@ function play_tab(){
     window.requires.exe.exec(`python ${tab_opend_path}`,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{
                   info_in_footer(stdout.replaceAll("\\\\","/"),5000);
           
-                  })
+                  });
 }
     
 function close_saving(){
@@ -785,6 +785,26 @@ function AutoLeaning(data){
   if(lines[0] == "#no autolearn") return;
   for(const line of lines){
     if(line.indexOf("no check") !== -1) continue;
+    if(line.match(".+?:.+?( |)=( |).+?(|\n)$")){// || line.match(".+?:.+?(|\n)$")){
+        const type_line = line;
+        const mean_type = type_line.split(":").filter((value,count)=>(count+1)%2 === 0)[0].split("=");
+        const type = mean_type[0].trim();
+        const value = mean_type[1].trim(); 
+        console.log(type);
+        console.log(value);
+        if(Object.keys(py_typers).indexOf(type) === -1){
+            py_typers[type] = (value.substring(0,value.indexOf("(")+1)).replaceAll("(","\\(")+".+?\\)";
+            fs.writeFile(window.requires.dirname+"/user_custom/py_type.json", JSON.stringify(py_typers, null, "\t"), (error) => {
+            if (error != null) {
+                alert('error : ' + error);
+                }
+            });
+        }
+        console.log(py_typers)
+
+        
+        
+    }
     if(line.indexOf("#alias") !== -1){
       const alias = line.split("#alias");
       const command = alias[0];

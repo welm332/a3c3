@@ -11,7 +11,7 @@
 			"if": null
 		}
 	},
-	"os.system": {
+    "os.system": {
 		"name": "os.system",
 		"code": "from os import system\n",
 		"replace": "import os\n",
@@ -23,7 +23,7 @@
 			"add": "system"
 		}
 	},
-	"numpy.": {
+    "numpy.": {
 		"name": "numpy.",
 		"code": "import numpy\n",
 		"replace": "",
@@ -39,4 +39,5 @@
 		"alias": "numpy.",
 		"name": "np"
 	}
+	
 }
