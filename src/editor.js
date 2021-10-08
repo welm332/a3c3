@@ -1301,6 +1301,7 @@ function onLoad() {
       }
       if(args["Others"].length !== 0){
         let first_flag = true;
+        let first_file = "";
         for(let fpath of args["Others"]){
           fpath = fpath.replaceAll("\\", "/");
           console.log(window.requires.path.extname(fpath))
@@ -1323,10 +1324,12 @@ function onLoad() {
           const fullpath = get_path(fpath);
           readFile(fullpath, em);
           if(first_flag){
-            get_focus(fullpath);
             first_flag = false;
+            first_file = fullpath;
           }
         }
+        
+        get_focus(first_file);
       }else{
         console.log("akifjwpeifjwepfjefiep")
         create_tab();
@@ -1348,7 +1351,15 @@ function onLoad() {
     if(debugMode === false){
       let shortcut = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/shortcut.jsonc', 'utf8'));
       for(const key of Object.keys(shortcut)){
-        window.api.on(key,()=> eval(shortcut[key]));
+        window.api.on(key,()=>{
+            try{
+                eval(shortcut[key]);
+            }catch{
+                info_in_footer(`ショートカット：${key}が失敗しました。`,5000);
+            }
+            
+            }   
+        );
         
       }
     }
