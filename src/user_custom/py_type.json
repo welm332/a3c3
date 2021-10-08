@@ -3,5 +3,7 @@
     "str":"\".*\"",
     "float":"^-?[0-9]+\\.[0-9]+$",
     "list":"\\[.*\\]$",
-    "dict":"\\{.*\\}"
+    "dict":"\\{.*\\}",
+    "Thread":"^Thread\\(\\)",
+    "threading.Thread":"^threading.Thread\\(\\)"
 }

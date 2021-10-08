@@ -6,7 +6,7 @@
 	"author": "welm",
 	"build": {
 		"appId": "com.example.myapp",
-		"productName": "Auto3",
+		"productName": "a3c3",
 		"files": [
 			"**/*"
 		],
@@ -14,7 +14,7 @@
 			"output": "C:\\Users\\taiki\\Desktop\\browsers"
 		},
 		"win": {
-			"icon": "auto3.png"
+			"icon": "a3c3.png"
 		}
 	},
 	"scripts": {
@@ -24,8 +24,7 @@
 		"build:inst:mac": "electron-builder   -m --x64",
 		"build:inst:linux": "electron-builder   -l --x64",
 		"pack": "electron-builder --dir",
-		"dist": "electron-builder",
-		"test": "dir && setx kaminoko kaminoko"
+		"dist": "electron-builder"
 	},
 	"devDependencies": {
 		"electron": "^13.2.1",

@@ -1,11 +1,18 @@
 Electron Text Editor
 ==
+# Name
 python用のエディター
-auto import 
-auto learning
-auto typing
-easy shortcut
-remote sending
+
+***a3c3(auto 3 commands 3)***
+* Auto 3
+    * auto import 
+    * auto learning
+    * auto typing
+
+* Commands 3
+    * easy shortcut commands
+    * remote sending commands
+    * palette Commands 
 
 # Build
     1:(yarn | npm)  install
@@ -15,6 +22,6 @@ remote sending
     if no build:
         2:(yarn | npx) run start (files)
     else:
-        auto3  (files)
+        a3c3  (files)
 ## LICENSE
 - [LICENSE](https://github.com/ics-creative/150819_electron_text_editor/blob/master/LICENSE)

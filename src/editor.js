@@ -276,10 +276,15 @@ function editor_write(commandLists){
   cust_onchange_on();
 }
 function cust_onchange_off(){
-  txt_editor._eventRegistry.change = [txt_editor._eventRegistry.change[0]];
+  if(txt_editor !== null){
+
+    txt_editor._eventRegistry.change = [txt_editor._eventRegistry.change[0]];
+  }
 }
 function cust_onchange_on(){
+  if(txt_editor !== null){
   debugMode || txt_editor.on('change', Onchange);
+  }
 }
 function txt_size_up(){
   txt_editor.setFontSize((txt_editor.getFontSize()+1))
@@ -569,7 +574,7 @@ function create_tab(){
   new_editor.dataset.fullpath = `unnamed${i}`;
   text_list[`unnamed${i}`] = "";
   last_saves[`unnamed${i}`] = "";
-  tab_opend_path = `unnamed${i}`;
+  // tab_opend_path = `unnamed${i}`;
   new_tab.innerHTML = `unnamed${i}<button class='delete'>X</button>`;
   new_tab.className = "tab";
   new_editor.className = "editor";
@@ -672,7 +677,7 @@ function create_tab(){
     );
     let editor = create_editor(new_editor);
     editor_dict[`unnamed${i}`] = editor;
-    txt_editor = editor;
+    // txt_editor = editor;
   cust_onchange_on();
   // txt_editor.session.setValue("auofhewaofhewfhejpfiewpfewpfiewfewpfeijfepifjepj");
   tab_widths[`unnamed${i}`] = gettabwidth(new_tab);
@@ -691,8 +696,8 @@ function AutoTyping() {
   let now_line = txt_editor.session.getLine(txt_editor.getCursorPosition().row);
   let var_names = now_line.split("=")[0].split(",");
   let values = txt_editor.getValue().substring(indexToPosition(txt_editor.session.getValue(),{row:txt_editor.getCursorPosition().row,column:0})).split("=")[1];
-  console.log(values)
   values = analyze_valable(values);
+  console.log(values)
   let type_and_names = [];
   let imports = [];
   for(let i=0,length=var_names.length;i<length;i++){
@@ -1111,18 +1116,16 @@ return false;
 }
 function get_focus(textContent){
   textContent = textContent.toLowerCase();
-  console.log(textContent);
-  console.log(tab_opend_path);
   textContent = textContent.replaceAll("\\", "/");
+  tab_opend_path = textContent;
+  txt_editor = editor_dict[tab_opend_path];
   const ftype_dict = JSON.parse(fs.readFileSync(window.requires.dirname+'/info/file_type.json', 'utf8'));
   file_type = ftype_dict[window.requires.path.extname(textContent).substring(1)];
-  console.log(file_type);
   // 拡張子でハイライトなどに使う言語情報の変更
   if(file_type !== undefined){
       txt_editor.session.setMode(`ace/mode/${file_type}`);
   }
-  tab_opend_path = textContent;
-  txt_editor = editor_dict[tab_opend_path];
+
 
   // タブの切り替えをエディターエレメントの表示、非表示で表現
   for(const editor of document.querySelectorAll(`.editor`)){
