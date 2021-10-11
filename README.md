@@ -6,8 +6,11 @@ python用のエディター
 ***a3c3(auto 3 commands 3)***
 * Auto 3
     * auto import 
-    * auto learning
+        > ![demo](./Gifs/auto_import.gif)
     * auto typing
+        > ![demo](./Gifs/auto_typing.gif)
+    * auto learning
+        1. ![demo2](./Gifs/auto_learning1.gif)
 
 * Commands 3
     * easy shortcut commands

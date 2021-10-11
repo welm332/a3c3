@@ -70,7 +70,6 @@ function parseElement(emstr){
         }
         em.setAttribute(a,b);
     }
-    console.log(em);
 }
 window.addEventListener('DOMContentLoaded', onLoad);
 function Onchange(event) {
@@ -89,7 +88,6 @@ function Onchange(event) {
   }
   var data= txt_editor.getValue();
   let text = data.substring(0, indexToPosition(data, txt_editor.getCursorPosition())+1).split("\n").slice(-1)[0].split("\t").slice(-1)[0].split(" ").slice(-1)[0]
-  console.log(text)
   if (text != "" && (index = Object.keys(py_imports).indexOf(text)) != -1){
     import_insert(py_imports[Object.keys(py_imports)[index]], data)
   }
@@ -112,87 +110,63 @@ function create_editor(element){
     return editor;
 }
 function delete_tab(event){
+    let target_tab = "";
     let parent = event.target.parentElement;
-    if(parent.dataset.fullpath === tab_opend_path){
-      if((index = tab_open_log.indexOf(parent.dataset.fullpath)) !== -1){
+    while(true){
+        if(parent.className === "tab"){
+            target_tab = parent;
+            break;
+        }else{
+            parent = parent.parentElement;
+        }
+    }
+    if(target_tab.dataset.fullpath === tab_opend_path){
+      if((index = tab_open_log.indexOf(target_tab.dataset.fullpath)) !== -1){
       tab_open_log.splice(index, 1);
       }
       if(tab_open_log.length > 0){
         get_focus(tab_open_log[0]);
         }
       }
-    parent.remove();
-    remove_tab_info(parent.textContent);
+    const target_editor = document.querySelector(`.editor[data-fullpath="${target_tab.dataset.fullpath}"]`);
+    ace.edit(target_editor).destroy();
+    target_editor.remove(); //すげ替え。
+    target_tab.remove();
+    remove_tab_info(target_tab.textContent);
     event.stopPropagation();
         }
 function loadhtml(element, path){
     ace.edit(element).destroy();
     const read = window.requires.fs.readFileSync(window.requires.dirname+path, 'utf8');
-    console.log(read)
     const domparser = new DOMParser();
     const html = domparser.parseFromString(read, "text/html");
-    console.log(html.body)
-    
+
     
     const clone = element.cloneNode( false ); //ガワだけ複製して…
     element.parentNode.replaceChild( clone , element ); //すげ替え。
     // clone.appendChild(html.body);
     // return
     chileds = html.body.children;
-    console.log(chileds)
     for(let i=0,len=chileds.length;i<len;i++){
         clone.appendChild(chileds[i]);
     }
 }
 function open_setting_page(){
-    
     const em = create_tab();
-    const editor = document.querySelector(`.editor[data-fullpath="${em.dataset.fullpath}"]`);
+    const editorpath = `.editor[data-fullpath="${em.dataset.fullpath}"]`;
+    const editor = document.querySelector(editorpath);
     loadhtml(editor, "/setting.html");
-    
-    return ;
-    const div = document.createElement("div");
-    // frame.id = "setting_page";
-    // frame.title = "設定ページ";
-    div.style.width = "100%";
-    div.style.height = "100%";
-    // frame.src  = window.requires.dirname+"/setting.html";
-    const settings = ["文字サイズ","テーマ","文字の色","画面サイズ"];
-    for(const title of settings){
-        const input = document.createElement("input");
-        const div_em = document.createElement("div");
-        div_em.style.color = "white";
-        const br = document.createElement("br");
-        div_em.textContent = title;
-        div.appendChild(div_em);
-        div.appendChild(input);
-        div.appendChild(br);
-        
+    const settings = Array.from(document.querySelector(editorpath).querySelectorAll("input")).map((v,i)=>[v.name,v.value])
+    const button = document.createElement(`button`)
+    button.onclick = ()=>{
+        const settings = Array.from(document.querySelector(editorpath).querySelectorAll("input")).map((v,i)=>[v.name,v.value]);
     }
-    
-    for(const child of document.body.children){
-        child.style.display = "none";
-    }
-    const button  = document.createElement("button");
-    button.textContent = "X";
-    button.onclick = (event)=>{
-        div.remove();
-        for(const child of document.body.children){
-            child.style.display = "";
-        }
-        event.target.remove();
-    };
-    button.style.position = "absolute";
-    button.style.top= "10px";
-    button.style.right = "10px";
-    button.style.zIndex = 2147483647;
-    document.body.appendChild(button);
-    document.body.appendChild(div);
-    // document.body.style.backgroundcolor = ""
+    button.type = "button";
+    button.textContent = "決定";
+    document.querySelector(editorpath+"> form").appendChild(button);
 
     
-    // frame.allow="fullscreen";
-    // frame.requestFullscreen();
+    return ;
 }
 function create_input_dialog(){
     const dialog = document.createElement('dialog');
@@ -214,7 +188,6 @@ function create_input_dialog(){
     document.getElementById("dialogspace").appendChild(dialog);
     dialog.showModal();
     dialog.addEventListener('close', function onClose() {
-        console.log(document.getElementById("dialog_input").value);
         dialog.remove();
     });
 }
@@ -298,7 +271,6 @@ function connect_remote(){
     if(status !== undefined && status.indexOf("remote:") !== -1){
         const command_key = status.substring(7);
         const remote_commands = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/remote.json', 'utf8'));
-        console.log(remote_commands);
         const command_dict = remote_commands[command_key];
         
         if(command_dict !== undefined){
@@ -313,28 +285,12 @@ function connect_remote(){
             command = command.replaceAll("%fullpath%",fullpath);
             command = command.replaceAll("%file%",file);
             
-            console.log(command);
             if(command_dict["sudo"]){
-                window.requires.sudo_exe.exec(command,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{
-                  console.log("stdout"+stdout);
-                  console.log("errs"+errs);
-                  console.log("stderr"+stderr);
-          
-                  })
+                window.requires.sudo_exe.exec(command,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{})
             }else{
-                window.requires.exe.exec(command,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{
-                  console.log("stdout"+stdout);
-                  console.log("errs"+errs);
-                  console.log("stderr"+stderr);
-          
-                  })
+                window.requires.exe.exec(command,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{})
             }
     
-            // console.log("err"+err);
-            // const Encoding = require('encoding-japanese');
-            // stdout =Encoding.convert(stdout, { from: 'SJIS', to: 'UNICODE', type: 'string' });
-            // stdout = stdout.substring(stdout.match("[1-9]+:[1-9]+").index).split("-")
-
         }
         
         
@@ -342,7 +298,6 @@ function connect_remote(){
     else{
         window.api.create_input_window();
         window.api.on("set_remote_command", function(event, command){
-            console.log(command);
             document.querySelector(`.tab[data-fullpath="${tab_opend_path}"]`).dataset.status = `remote:${command}`;
             
         });
@@ -354,10 +309,7 @@ function import_insert(com_dict,text){
     cust_onchange_off();
     code = null;
     insert_text = text;
-    console.log(text);
-    console.log(com_dict["sule"]);
     let dot_change_flag = false;
-    // console.log([...Array(com_dict["sule"].length).keys()].filter((d) => text.search(com_dict["sule"][d])  != -1))
     if("alias" == Object.keys(com_dict)[0]){
         names = com_dict["name"]
         com_dict = py_imports[com_dict["alias"]]
@@ -375,7 +327,6 @@ function import_insert(com_dict,text){
             txt_editor.moveCursorToPosition(postionToIdnex(text,text.length));
           }
           cust_onchange_on();
-          console.log("ih")
           //     print([rule for rule in com_dict["sule"]])
     //     print(insert_text)
     //     print("kafj;eofj")
@@ -384,7 +335,6 @@ function import_insert(com_dict,text){
         return
     }
     else if( com_dict["update"]["if"] != null && insert_text.indexOf(com_dict["update"]["if"]) != -1){
-        console.log("akksks");
         replaced_index = insert_text.indexOf(com_dict["update"]["if"]);
         // console.info(postionToIdnex(text,index))
         line = insert_text.substring(replaced_index).split("\n")[0]+","+com_dict["update"]["add"]+"\n";//+insert_text.substring(index).split("\n").slice(1).join("\n")
@@ -393,9 +343,7 @@ function import_insert(com_dict,text){
         // insert_text = insert_text.substring(0, index) + line
         txt_editor.session.remove({"start": replaced_pos, "end":{"row": replaced_pos.row,"column":replaced_pos.column+lastLine.length}});
         line = line.replace("\n","");
-        console.log(line);
         column = 0;
-        console.log(line);
         let first_column = replaced_pos.column;
         // return
         for (let i of line.split(",")){
@@ -407,7 +355,6 @@ function import_insert(com_dict,text){
         }
         let command_index = indexToPosition(text, txt_editor.getCursorPosition())+1;
         text = txt_editor.session.getValue().replace(com_dict["name"], com_dict["name"].substring(com_dict["name"].indexOf(".")+1))
-        console.log(text)
         txt_editor.setValue(text);
         txt_editor.clearSelection();
         txt_editor.moveCursorToPosition(postionToIdnex(text,text.length));
@@ -419,31 +366,22 @@ function import_insert(com_dict,text){
         
     }
     else{
-      console.log(dot_change_flag)
       if(com_dict["name"].indexOf(".") !== -1 && com_dict["name"].split(".")[1].length != 0 && ! dot_change_flag) {
         console.error("yatta")
         let command_index  = indexToPosition(text, txt_editor.getCursorPosition());
         let lastLine = text.substring(0, command_index+1).split("\n").slice(-1);
-        console.log(lastLine)
         command_index -= (lastLine.indexOf(com_dict["name"])+com_dict["name"].length-1);
-        console.log(command_index)
-        console.log(text[command_index])
-        console.log(text.substring(0, command_index))
-        console.log(text.substring(command_index+com_dict["name"].split(".")[0].length+1))
         text = text.replace(com_dict["name"], com_dict["name"].substring(com_dict["name"].indexOf(".")+1))
-        console.log(text)
       }
 
 
         insert_text = code+text
         insert_text = insert_text.replace(com_dict["replace"],"")
     }
-    // console.log(code)
     let e = inputArea.oninput;
     inputArea.oninput = "";
     let cursor_pos = txt_editor.getCursorPosition();
     var count = ( insert_text.match( /\n/g ) || [] ).length  -( text.match( /\n/g ) || [] ).length ;
-    console.log(count)
     cursor_pos.row += count;
     cursor_pos.column++;
     if( insert_text.indexOf("%curpos%") !== -1){
@@ -461,8 +399,6 @@ function import_insert(com_dict,text){
             cursor_pos.column+com_dict["curpos_replace"]["txt"].length
                   
           )
-          console.log(cursor_pos.column-1)
-          console.info(cursor_pos.column)
           txt_editor.session.selection.setRange(
             range,
             true
@@ -500,7 +436,6 @@ function getLine(text, index){
 }
 function get_tab_count(line){
   let tab_counter = 0;
-  console.log(line)
   for(let char of line){
     if(char === " "){
       tab_counter++;
@@ -531,25 +466,20 @@ function gettabwidth(element){
 function get_before_typing(txt, line, row, values){
   let tab_counter = get_tab_count(line);
   const start_row = row;
-  console.log(`tab_counter=${tab_counter}`);
   if(tab_counter !== 0){    
     let before_line = txt.session.getLine(--row);
     while(get_tab_count(before_line) !== 0 && before_line.indexOf("def ") === -1){
 
       before_line = txt.session.getLine(--row);
     }
-    console.log("beforeline"+before_line);
     if(before_line.indexOf("def ") !== -1){
       lines = txt.session.getLines(row, start_row);
       for(const line of lines){
-        console.log(line);
         for (const val of values){
           if(line.indexOf(`${val.trim()}:`) !== -1){
-            console.log(line);
             footerArea.textContent = "OverWrite?(y/n)"
             input_int = true;
             window.onkeydown = (event)=> {
-              console.log(event.key);
             }
             
           }
@@ -593,7 +523,6 @@ function create_tab(){
   new_tab.onmouseoit = function(){
     footerArea.textContent = "";
   }
-  console.log(new_editor)
   document.querySelector("#input_area").appendChild(new_editor);
   document.querySelector("#tabplus").before(new_tab);
   new_editor.addEventListener("click", (event) =>{
@@ -616,11 +545,8 @@ function create_tab(){
           str_right = str_right.concat(lang_info[lang]["strRight"])
          
       };
-      console.log(str_left);
-      console.log(str_right);
       while(true){
         if(left === 0){
-            console.log(left)
             return false;
         }
         if(["\"","'"].indexOf(value[left]) !== -1){
@@ -633,21 +559,16 @@ function create_tab(){
         }
       while(true){
         if(["\"","'"].indexOf(value[right]) !== -1){
-          console.log("yes");
           if(right+1 === value.length-1 || str_right.indexOf(value[right+1]) !== -1){
-            console.log("no");
             break;
           }
           right += 1;
           }else if(right === value.length-1){
-            console.log(right+1);
-            console.log(value.length);
             return false;
         }
           right += 1;
         }
         const select_word = value.substring(left+1,right);
-        console.log(select_word);
         let pathtty = select_word;
         if(pathtty.indexOf("://") === -1  && pathtty.indexOf(":\\\\") === -1){
             let tab = document.querySelector(`.tab[data-fullpath="${tab_opend_path}"]`);
@@ -656,11 +577,9 @@ function create_tab(){
             pathtty = path.join(dirname, pathtty);
             
         }
-            console.log(pathtty);
-        
+
         if(fs.existsSync(pathtty)){
             const replacement = create_tab().dataset.fullpath;
-            console.log(replacement);
             readFile(pathtty, replacement);
         }else if(select_word.substring(0,4) === "http"){
             window.api.search(select_word);
@@ -670,10 +589,6 @@ function create_tab(){
       }
         
       }
-      //   if(event.key = "Control"){
-    //       onctrl = true;
-    //   }
-    //   console.log(key)
     );
     let editor = create_editor(new_editor);
     editor_dict[`unnamed${i}`] = editor;
@@ -697,12 +612,9 @@ function AutoTyping() {
   let var_names = now_line.split("=")[0].split(",");
   let values = txt_editor.getValue().substring(indexToPosition(txt_editor.session.getValue(),{row:txt_editor.getCursorPosition().row,column:0})).split("=")[1];
   values = analyze_valable(values);
-  console.log(values)
   let type_and_names = [];
   let imports = [];
   for(let i=0,length=var_names.length;i<length;i++){
-    // console.log(var_names[i]);
-    // console.log(values[i]);
     let type = get_type(values[i].trim());
     if(type == "list" || type === "tuple"){
       type = analyze_iterator(values[i].trim());
@@ -711,7 +623,6 @@ function AutoTyping() {
       type_and_names.push({"var_name":var_names[i].trim(), "type":type});
     }else{
       sub_types = Array.from(new Set(type.children_type)).join(",");
-      console.log(sub_types);
       if(Array.from(new Set(type.children_type)).length === 1){
         sub_types =`${type.type}[${sub_types}]`;
       }else{
@@ -724,45 +635,6 @@ function AutoTyping() {
         }
       }
     }
-    console.log(type);
-  //     for(let key of Object.keys(py_typers)){
-  //       // if(py_typers[key] == "%float"){
-  //       //   py_typers[key] = "^-?[0-9]+\.[0-9]+$";
-  //       // }
-  //       let re = new RegExp(py_typers[key]);
-  //       const match = values[i].trim().match(re);
-  //       console.log(re)
-  //       if(match != null && match.input == match[0]){
-  //         type = key;
-  //         if(key == "list"){
-  //           sub_types = []
-  //           for(let sub_value of values[i].split("[")[1].split(",")){
-  //             if (sub_value[sub_value.length-1] == "]"){
-  //               sub_value = sub_value.substring(0, sub_value.length-1)
-  //             }
-  //           for(let sub_key of Object.keys(py_typers)){
-  //               let sub_re = new RegExp(py_typers[sub_key]);
-  //               const sub_match = sub_value.trim().match(sub_re);
-  //               if(sub_match != null && sub_match.input == sub_match[0]){ 
-  //                 sub_types.push(sub_key);
-  //               }
-  //           }
-  //         }
-  //           console.log(sub_types.filter(function(x){return x===sub_types[0]}).length)
-  //           console.log(sub_types)
-  //           if(sub_types.filter(function(x){return x===sub_types[0]}).length != sub_types.length){
-  //             type = `list[typing.Union[${sub_types.join(",")}]]`; 
-  //             imports.push("typing.Union");
-
-  //           }else{
-  //             type = `list[${sub_types[0]}]`;
-  //           }
-  //         }
-  //         type_and_names.push({"var_name":var_names[i].trim(), "type":type})
-  //         console.log(key);
-  //         break;
-  //     }
-  // }
 }
 const row = txt_editor.getCursorPosition().row
 for(let item of type_and_names) {
@@ -775,7 +647,7 @@ if(imports.length != 0){
 }
 }
 
-function AutoLeaning(data){
+function AutoLearning(data){
     if(txt_editor.session.getMode().$id.split("/")[2] !== "python"){
         return false;
     }
@@ -788,21 +660,15 @@ function AutoLeaning(data){
     if(line.match(".+?:.+?( |)=( |).+?(|\n)$")){// || line.match(".+?:.+?(|\n)$")){
         const type_line = line;
         const mean_type = type_line.split(":").filter((value,count)=>(count+1)%2 === 0)[0].split("=");
-        const type = mean_type[0].trim();
-        const value = mean_type[1].trim(); 
-        console.log(type);
-        console.log(value);
-        if(Object.keys(py_typers).indexOf(type) === -1){
-            py_typers[type] = (value.substring(0,value.indexOf("(")+1)).replaceAll("(","\\(")+".+?\\)";
-            fs.writeFile(window.requires.dirname+"/user_custom/py_type.json", JSON.stringify(py_typers, null, "\t"), (error) => {
-            if (error != null) {
-                alert('error : ' + error);
-                }
-            });
+        const type = type_line.substring(type_line.indexOf(":")+1).split("=")[0].trim();
+        if(type.length !== 0){
+            
+            const value = mean_type[1].trim(); 
+            if(Object.keys(py_typers).indexOf(type) === -1){
+                py_typers[type] = (value.substring(0,value.indexOf("(")+1)).replaceAll("(","\\(")+".+?\\)";
+                fs.writeFileSync(window.requires.dirname+"/user_custom/py_type.json", JSON.stringify(py_typers, null, "\t"));
+            }
         }
-        console.log(py_typers)
-
-        
         
     }
     if(line.indexOf("#alias") !== -1){
@@ -842,7 +708,6 @@ function AutoLeaning(data){
 
       }
       const method = line.split("import")[1].split("#")[0].trim();
-      console.log(method);
       imports.push(
         {
           "method":method
@@ -853,9 +718,7 @@ function AutoLeaning(data){
           while(true){
               if((index=data_cp.indexOf(`${method}.`)) !== -1){
                   const subm = data_cp.substring(index+`${method}.`.length).split("(")[0];
-                  console.log(subm);
                   data_cp = data_cp.substring(index+`${method}.`.length+1+subm.length);
-                  console.log(data_cp);
               }else{
                 break;
               }
@@ -865,8 +728,6 @@ function AutoLeaning(data){
     }else if(line.indexOf("from") === 0){
       const fromer = line.split("from")[1].split("import")[0].trim();
       const method = line.split("import")[1].trim();
-      console.log(method);
-      console.log(fromer);
       imports.push(
         {
           "from":method,
@@ -875,7 +736,6 @@ function AutoLeaning(data){
       );
     }
   }
-  console.log(imports);
   for(const imp of imports){
     if(Object.keys(imp).indexOf("as") !== -1){
       if(Object.keys(py_imports).indexOf(imp["as"]) === -1){
@@ -884,12 +744,6 @@ function AutoLeaning(data){
           "name":imp["as"]
           };
       }
-      console.log(`
-        "${imp["as"]}.":{
-          "alias":"${imp["method"]}.",
-          "name":"${imp["as"]}"
-          }
-      `);
       
   }
     if(Object.keys(imp).indexOf("from") !== -1){
@@ -902,15 +756,6 @@ function AutoLeaning(data){
           "update":{"if":`from ${imp["method"]} import`,"add":`${imp["from"]}`}};
       
       }
-      console.log(`
-        "${imp["from"]}.${imp["method"]}":{
-          "name":"${imp["from"]}.${imp["method"]}",
-          "code":"from ${imp["from"]} import ${imp["method"]}\n",
-          "replace":"import ${imp["from"]}\n",
-          "sule":["from ${imp["from"]} import [^(\\r\\n)]*${imp["method"]}"],
-          "update":{"if":"from ${imp["from"]} import","add":"${imp["method"]}"}}
-      `);
-      
   }
     if(Object.keys(imp).indexOf("method") !== -1){
       if(Object.keys(py_imports).indexOf(`${imp["method"]}.`) === -1){
@@ -922,12 +767,6 @@ function AutoLeaning(data){
           "update":{"if":null}
         };
       }
-      console.log(`"${imp["method"]}.":{
-        "name":"${imp["method"]}.",
-        "code":"import ${imp["method"]}\n",
-        "replace":"",
-        "sule":["from ${imp["method"]}", "import ${imp["method"]}"],
-        "update":{"if":null}}`);
     }
   }
   fs.writeFile(window.requires.dirname+"/user_custom/py.json", JSON.stringify(py_imports, null, "\t"), (error) => {
@@ -962,7 +801,6 @@ function analyze_valable(text) {
   for(let i = 0,len=text.length;i<len;i++){
     
     const char = text[i];
-    console.log(char);
     if(left_dict.indexOf(char) !== -1) {
         iterable_counts[char]++;
         value += char;
@@ -980,13 +818,11 @@ function analyze_valable(text) {
       }else if(char === "\n"){
           if(Object.values(iterable_counts).reduce((sum,elm)=>{return sum+elm},0) %2 === 0){
               values.push(value);
-              console.log(values)
               return values;
           }
       }else if(["\r"," ","\t"].indexOf(char) === -1){
             value += char;
       }
-      console.log(values)
   }
   return values.concat([value]);
 }
@@ -1004,20 +840,13 @@ function analyze_iterator(text) {
   let type_list = ["list","dict","tuple"];
   let type = type_list[left_dict.indexOf(text[0])];
   text = text.replaceAll("\n","").replaceAll(" ","");//リストか確認するときは改行とかも見たいが、中身に入らない
-  console.info(text[0]);
-  console.info(type)
   text = text.substring(1,text.length-1);
-  console.log(text);
   let imports = [];
-  console.log(text);
   for(let i = 0,len=text.length;i<len;i++){
     const list_chaild = text[i];
-    console.log(i);
     // if(left_dict.indexOf(list_chaild) !== -1) {
     if((index = char_dict.indexOf(list_chaild)) !== -1){
       const chars = char_dict[index];
-      // console.log(chars);
-      // console.log(text.substring(i+1));
       children.push('"'+text.substring(i+1,i+1+text.substring(i+1).indexOf(chars))+'"');
       i += (text.substring(i+1).indexOf(chars)+2);
       children_types.push("str");
@@ -1025,8 +854,6 @@ function analyze_iterator(text) {
     else if(left_dict.indexOf(list_chaild) !== -1) {
       // 再帰で入れ子の型を調べてる
       const index = get_iterable(text.substring(i));
-      console.log(text.substring(i));
-      console.error(index);
       const ite = analyze_iterator(text.substring(i).substring(index.start, index.end+1));
 
       children.push(ite);
@@ -1047,9 +874,7 @@ function analyze_iterator(text) {
       }
     }
     else if(list_chaild !== ","){ 
-      console.log(list_chaild)
       let ch = text.substring(i,i+text.substring(i).indexOf(","));
-      console.log(ch);
       // 1,2,34
       // i = 2
       if(text.substring(i).indexOf(",") < 0)
@@ -1061,20 +886,13 @@ function analyze_iterator(text) {
         i += text.indexOf(",");
       }
         children.push(ch);
-        console.log(ch)
-        console.log(i);
         children_types.push(get_type(ch));
-        console.log(text.indexOf(","));
-        // 1,2
-        console.log(text.substring(i+1));
-        // i++;
       }
   }
   sub_types = Array.from(new Set(children_types)).join(",");
   if(children_types.length !== 1){
     imports.push("typing.Union");
   }
-  console.log(children_types);
 
   return {
     "type": type,
@@ -1093,14 +911,10 @@ function get_iterable(iterator){
   let iterable_index = {start:0,end:0};
   let count = 0;
   for(const char of iterator){
-    // console.log(char);
-    // console.log(counterbule);
     if(right_spliter === "" && left_spliter === "" && (index = left_dict.indexOf(char)) !== -1){
       iterable_index["start"] = count;
       left_spliter = left_dict[index];
       right_spliter = right_dict[index];
-      console.log(left_spliter, right_spliter);
-      // type = type_list[index];
       counterbule["left"]++;
     }else if(right_spliter === char){
       counterbule["right"]++;
@@ -1116,13 +930,10 @@ function get_iterable(iterator){
     }
     count++;
   }
-  // console.log(iterator.trim());
   return false;
 }
 function get_type(val){
-  console.log(val);
   val = val.trim();
-  console.log(val);
   for(let key of Object.keys(py_typers)){
     // if(py_typers[key] == "%float"){
     //   py_typers[key] = "^-?[0-9]+\.[0-9]+$";
@@ -1157,7 +968,6 @@ function get_focus(textContent){
   };
   // フォーカスが当たってるときのタブを紫に変更
   for (const tab of document.querySelectorAll(".tab")){
-    console.log(tab.textContent);
     const textContent = tab.dataset.fullpath;
     let color = "purple";
     if(textContent === tab_opend_path){
@@ -1170,8 +980,6 @@ function move_tab(vector){
   let lis = document.querySelectorAll(".tab");
   for(let i=0,len=lis.length;i<len;i++){
     if(tab_opend_path === lis[i].dataset.fullpath){
-      // console.log(lis[i-1].dataset.fullpath);
-      // console.log(lis[i+1].dataset.fullpath);
       if(i-1 >= 0 && vector === "left"){
         get_focus(lis[i-1].dataset.fullpath)
         break;
@@ -1209,7 +1017,7 @@ function saveFile(saveValue) {
       remove_tab_info(tab_opend_path);
     }
     get_focus(path);
-    AutoLeaning(txt_editor.session.getValue());
+    AutoLearning(txt_editor.session.getValue());
   });
 }
 function getSettings(key) {
@@ -1218,12 +1026,6 @@ function getSettings(key) {
 }
 function onLoad() {
 
-//     document.addEventListener("keyup", (key) =>{
-//       if(event.key = "Control"){
-//           onctrl = false;
-//       }
-//     //   console.log(key)
-//   })
   document.getElementById("tabplus").onclick = function(){
     create_tab();
 
@@ -1274,7 +1076,6 @@ function onLoad() {
       debugMode = args["Debugflag"];
       if(debugMode){
         const open_files = getSettings("debug_open_files");
-        console.log(open_files)
         if(open_files == undefined){
           open_files = [
             ...Object.values(custom_list),
@@ -1294,7 +1095,6 @@ function onLoad() {
           }
         }
       }
-      console.log(args);
       backup_file = window.requires.dirname+"/.backup/save.json";
       if(fs.existsSync(backup_file)){
           args["Others"] = args["Others"].concat(Object.keys(JSON.parse(fs.readFileSync(backup_file, "utf8"))));
@@ -1304,19 +1104,7 @@ function onLoad() {
         let first_file = "";
         for(let fpath of args["Others"]){
           fpath = fpath.replaceAll("\\", "/");
-          console.log(window.requires.path.extname(fpath))
           const exsits_flag = fs.existsSync(fpath);
-        //   if(window.requires.path.extname(fpath) === ".lnk"){
-        //     window.requires.shortcut_path.getPath(fpath).then((actualPath) =>{
-        //         console.log(actualPath);
-        //         readFile(actualPath, em);
-        //         if(first_flag){
-        //           get_focus(actualPath);
-        //           first_flag = false;
-        //         }
-        //      })
-        //      console.log("kajetpeo")
-        //   }
           if(exsits_flag === false){//ディレクトリの対応する
             fs.writeFileSync(fpath, '');
           }
@@ -1331,7 +1119,6 @@ function onLoad() {
         
         get_focus(first_file);
       }else{
-        console.log("akifjwpeifjwepfjefiep")
         create_tab();
         get_focus("unnamed1");
       }
@@ -1344,7 +1131,7 @@ function onLoad() {
               cust_onchange_on();
           }
           
-          
+       cust_onchange_on();   
       
     });
     // shorthcut 作成 デバッグモードでは使用しないよう
@@ -1399,20 +1186,7 @@ function onLoad() {
     const file = event.dataTransfer.files[0];
     readFile(file.path);
   });
-
-  // 「読み込む」ボタンの制御
-  document.querySelector('#btnLoad').addEventListener('click', () => {
-    window.api.openLoadFile();
-  });
-  // 「保存する」ボタンの制御
-  document.querySelector('#btnSave').addEventListener('click', () => {
-    saveFile(txt_editor.session.getValue());
-  });
-};
-
-/**
- * テキストを読み込み、テキストを入力エリアに設定します。
- */
+}
 function readFile(path, replacement = tab_opend_path) {
   path = path.toLowerCase() ;
   const editor = document.querySelector(`.editor[data-fullpath="${replacement}"]`);
@@ -1424,8 +1198,6 @@ function readFile(path, replacement = tab_opend_path) {
   remove_tab_info(replacement);
   const text = fs.readFileSync(path, 'utf8');
   const tab = document.querySelector(`.tab[data-fullpath="${replacement}"]`);
-  console.log(document.querySelector(`.tab[data-fullpath="${path}"]`));
-  console.log(path);
   if( document.querySelector(`.tab[data-fullpath="${path}"]`) !== null){
       if(tab.dataset.status === "if can't fileRead then delete"){
           tab.querySelector("button").click();
@@ -1448,15 +1220,12 @@ function readFile(path, replacement = tab_opend_path) {
   editor_dict[path].session.setValue(text);
   cust_onchange_on();
   if(document.querySelectorAll(".tab").length === 1){
-    console.log("thanks");
     get_focus(path.replaceAll("\\", "/"))
     // tab_opend_path = path.replaceAll("\\", "/");
     footerArea.innerHTML = path;
-    console.info("===============-")
-    console.log(text)
     // txt_editor.session.setValue(text, -1);
   }
-}
+};
 
 
 
