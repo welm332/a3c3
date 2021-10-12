@@ -11,7 +11,7 @@
 			"**/*"
 		],
 		"directories": {
-			"output": "C:\\Users\\taiki\\Desktop\\browsers"
+			"output": "C:\\Users\\taiki\\Desktop\\program\\portfolio\\150819_electron_text_editor\\installer"
 		},
 		"win": {
 			"icon": "a3c3.png"

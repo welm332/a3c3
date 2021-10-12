@@ -45,6 +45,7 @@ function onload(){
         });   
         return i[0];
   })
+  
   ipcMain.on("install",(e,path,checked)=>{
       console.log(path,checked)
       const exec = require("child_process").exec;
@@ -55,15 +56,14 @@ function onload(){
       json["build"]["directories"]= {};
       json["build"]["directories"]["output"]  = path;
       fs.writeFileSync(filename, JSON.stringify(json, null, "\t"))
+      const path_writer = require("../scripts/path_writer")
       
-    //   return
+    // //   return
       exec(`yarn run pack  `,(a,b,c)=>{
-          console.log(a);
-          console.log(b);
-          console.log(c);
+          BrowserWindow.getFocusedWindow().webContents.send('install Done');
       });
       if(checked){
-        exec(`node ${__dirname}/../scripts/path_writer.js path ${path}`);
+         path_writer.add_env("path", `${path}\\win-unpacked`);
       }
       
   }
