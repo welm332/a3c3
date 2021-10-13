@@ -2,6 +2,7 @@ Electron Text Editor
 ==
 # Name
 python用のエディター
+以下英語で書いてますが、editor内の表示は現状すべて日本語です。
 
 ***a3c3(auto 3 commands 3)***
 * Auto 3
@@ -26,5 +27,3 @@ python用のエディター
         2:(yarn | npx) run start (files)
     else:
         a3c3  (files)
-## LICENSE
-- [LICENSE](https://github.com/ics-creative/150819_electron_text_editor/blob/master/LICENSE)
