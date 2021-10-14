@@ -665,7 +665,7 @@ function AutoLearning(data){
             
             const value = mean_type[1].trim(); 
             if(Object.keys(py_typers).indexOf(type) === -1){
-                py_typers[type] = (value.substring(0,value.indexOf("(")+1)).replaceAll("(","\\(")+".+?\\)";
+                py_typers[type] = (value.substring(0,value.indexOf("(")+1)).replaceAll("(","\\(")+".*?\\)";
                 fs.writeFileSync(window.requires.dirname+"/user_custom/py_type.json", JSON.stringify(py_typers, null, "\t"));
             }
         }
@@ -938,9 +938,9 @@ function get_type(val){
     // if(py_typers[key] == "%float"){
     //   py_typers[key] = "^-?[0-9]+\.[0-9]+$";
     // }
-    let re = new RegExp(py_typers[key]);
-    const match = val.trim().match(re);
-    if(match != null && match.input == match[0]){
+    // let re = new RegExp();
+    const match = val.trim().match(py_typers[key]);
+    if(match != null && match.input === match[0]){
       return key;
 }}
 return false;
@@ -1139,11 +1139,11 @@ function onLoad() {
       let shortcut = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/shortcut.jsonc', 'utf8'));
       for(const key of Object.keys(shortcut)){
         window.api.on(key,()=>{
-            try{
+            // try{
                 eval(shortcut[key]);
-            }catch{
-                info_in_footer(`ショートカット：${key}が失敗しました。`,5000);
-            }
+            // }catch{
+            //     info_in_footer(`ショートカット：${key}が失敗しました。`,5000);
+            // }
             
             }   
         );

@@ -11,7 +11,7 @@
 			"if": null
 		}
 	},
-	"os.system": {
+    "os.system": {
 		"name": "os.system",
 		"code": "from os import system\n",
 		"replace": "import os\n",
@@ -23,7 +23,7 @@
 			"add": "system"
 		}
 	},
-	"numpy.": {
+    "numpy.": {
 		"name": "numpy.",
 		"code": "import numpy\n",
 		"replace": "",
@@ -38,53 +38,6 @@
 	"np.": {
 		"alias": "numpy.",
 		"name": "np"
-	},
-	"threading.": {
-		"name": "threading.",
-		"code": "import threading\n",
-		"replace": "",
-		"sule": [
-			"from threading",
-			"import threading"
-		],
-		"update": {
-			"if": null
-		}
-	},
-	"PIL.Image": {
-		"name": "PIL.Image",
-		"code": "from PIL import Image\n",
-		"replace": "import PIL\n",
-		"sule": [
-			"from PIL import [^(\\r\\n)]*Image"
-		],
-		"update": {
-			"if": "from PIL import",
-			"add": "Image"
-		}
-	},
-	"PIL.": {
-		"name": "PIL.",
-		"code": "import PIL\n",
-		"replace": "",
-		"sule": [
-			"from PIL",
-			"import PIL"
-		],
-		"update": {
-			"if": null
-		}
-	},
-	"glob.": {
-		"name": "glob.",
-		"code": "import glob\n",
-		"replace": "",
-		"sule": [
-			"from glob",
-			"import glob"
-		],
-		"update": {
-			"if": null
-		}
 	}
+	
 }
