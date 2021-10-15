@@ -5,7 +5,7 @@
 // // C:\Users\taiki\desktop\program\elecron\150819_electron_text_editor\src\main.js
 const electron = require('electron');
 const parseArgs = require('electron-args');
-
+var watcher = null;
 const cli = parseArgs(`
     sample-app
 
@@ -371,7 +371,49 @@ console.log("kaminoko")
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  
   mainWindow.on('ready-to-show', ()=>console.log("reesd"));
+     
+    //require
+   var chokidar = require("chokidar");
+   
+   console.log(watcher);
+   ipcMain.on("chokidar_path_add", (event, path) => {
+    console.log("pathh adding"+path);
+    if(watcher === null){
+      console.log("null");
+      watcher = chokidar.watch(path,{
+        ignored:/[\/\\]\./,
+        persistent:true
+    });
+
+       //イベント定義
+   watcher.on('ready',function(){
+       
+
+       
+    watcher.on('change',function(path){
+        console.log(path + " changed.");
+        mainWindow.webContents.send("file_change", path);
+       //  file_changed(path);
+        });
+    watcher.on('unlink',function(path){
+        console.log(path + " changed.");
+        mainWindow.webContents.send("file_delete", path);
+       //  file_deleted(path);
+        });
+    });
+
+    }else{
+      console.log("add")
+      watcher.add(path);
+    }
+    
+    });
+   
+
+   
 }
 
 //  初期化が完了した時の処理

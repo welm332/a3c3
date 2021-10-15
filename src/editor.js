@@ -19,6 +19,46 @@ let select_tab = "";//開いてるタブの要素
 let debugMode = false;
 let onctrl = false;
 var chileds;
+// function create_watcher(path){
+    
+//      //require
+//     var chokidar = window.requires.chokidar;
+//     console.log(chokidar);
+    
+//     //chokidarの初期化
+//     var watcher = chokidar.watch(path,{
+//       ignored:/[\/\\]\./,
+//       persistent:true
+//     });
+//     console.log(watcher);
+//     console.log(path)
+//     watcher._events["ready"] = function(){
+//       watcher._events["change"] =  (path)=>{console.log(path)}
+//     }
+//     return watcher
+    
+//     //イベント定義
+//     // watcher.on('ready',function(){
+//     //     watcher.on('change',function(path){
+//     //         file_changed(path);
+//     //     });
+//     //     watcher.on('unlink',function(path){
+//     //         file_deleted(path);
+//     //     });
+//     // });
+    
+// }
+  
+// create_watcher(`${window.requires.dirname}/../dist`);
+
+function file_deleted(path){
+    console.log(path + " deleted.");
+}
+
+function file_changed(path){
+    console.log(path + " changed.");
+    
+}
 function play_tab(){
     window.requires.exe.exec(`python ${tab_opend_path}`,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{
                   info_in_footer(stdout.replaceAll("\\\\","/"),5000);
@@ -776,6 +816,21 @@ function AutoLearning(data){
   });
 
 }
+
+window.api.on("file_change", (event,path)=>{
+    console.log("change"+path);
+    readFile(path.replaceAll("\\", "/"), path.replaceAll("\\", "/"));
+});
+
+window.api.on("file_delete", (event,path)=>{
+    console.log("delete"+path);
+    document.querySelector(`.tab[data-fullpath="${path.replaceAll('\\','/').toLocaleLowerCase()}"]`).textContent = window.requires.path.basename(path)+"(削除済み)";
+    let button_em = document.createElement('button');
+    button_em.innerHTML = "X";
+    button_em.onclick = delete_tab;
+    document.querySelector(`.tab[data-fullpath="${path.replaceAll('\\','/').toLocaleLowerCase()}"]`).appendChild(button_em);
+});
+
 window.api.on("open_new_file", function(event,path){
   open_file();
 });
@@ -1189,13 +1244,17 @@ function onLoad() {
 }
 function readFile(path, replacement = tab_opend_path) {
   path = path.toLowerCase() ;
+  replacement = replacement.toLocaleLowerCase();
   const editor = document.querySelector(`.editor[data-fullpath="${replacement}"]`);
   path = path.replaceAll("\\", "/");
   editor.dataset.fullpath = path;
   if(!fs.existsSync(path)) return;
   tab_widths[path] = tab_widths[replacement];
   editor_dict[path] = editor_dict[replacement];
-  remove_tab_info(replacement);
+  if(path !== replacement){
+    window.api.chokidar_path_add(path);
+    remove_tab_info(replacement);
+  }
   const text = fs.readFileSync(path, 'utf8');
   const tab = document.querySelector(`.tab[data-fullpath="${replacement}"]`);
   if( document.querySelector(`.tab[data-fullpath="${path}"]`) !== null){

@@ -26,6 +26,9 @@ contextBridge.exposeInMainWorld(
         send_remote_command:async(command)=>{
             await ipcRenderer.send("input_window_send",command);
     },
+        chokidar_path_add: (path) => {
+            ipcRenderer.send("chokidar_path_add", path)
+        }
 
     },
 
