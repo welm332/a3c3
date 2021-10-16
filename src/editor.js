@@ -49,16 +49,6 @@ var chileds;
     
 // }
   
-// create_watcher(`${window.requires.dirname}/../dist`);
-
-function file_deleted(path){
-    console.log(path + " deleted.");
-}
-
-function file_changed(path){
-    console.log(path + " changed.");
-    
-}
 function play_tab(){
     window.requires.exe.exec(`python ${tab_opend_path}`,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{
                   info_in_footer(stdout.replaceAll("\\\\","/"),5000);
