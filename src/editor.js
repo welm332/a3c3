@@ -19,35 +19,6 @@ let select_tab = "";//開いてるタブの要素
 let debugMode = false;
 let onctrl = false;
 var chileds;
-// function create_watcher(path){
-    
-//      //require
-//     var chokidar = window.requires.chokidar;
-//     console.log(chokidar);
-    
-//     //chokidarの初期化
-//     var watcher = chokidar.watch(path,{
-//       ignored:/[\/\\]\./,
-//       persistent:true
-//     });
-//     console.log(watcher);
-//     console.log(path)
-//     watcher._events["ready"] = function(){
-//       watcher._events["change"] =  (path)=>{console.log(path)}
-//     }
-//     return watcher
-    
-//     //イベント定義
-//     // watcher.on('ready',function(){
-//     //     watcher.on('change',function(path){
-//     //         file_changed(path);
-//     //     });
-//     //     watcher.on('unlink',function(path){
-//     //         file_deleted(path);
-//     //     });
-//     // });
-    
-// }
   
 function play_tab(){
     window.requires.exe.exec(`python ${tab_opend_path}`,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{
@@ -366,7 +337,6 @@ function import_insert(com_dict,text){
     }
     else if( com_dict["update"]["if"] != null && insert_text.indexOf(com_dict["update"]["if"]) != -1){
         replaced_index = insert_text.indexOf(com_dict["update"]["if"]);
-        // console.info(postionToIdnex(text,index))
         line = insert_text.substring(replaced_index).split("\n")[0]+","+com_dict["update"]["add"]+"\n";//+insert_text.substring(index).split("\n").slice(1).join("\n")
         let lastLine = insert_text.substring(replaced_index).split("\n")[0];
         let replaced_pos = postionToIdnex(text, replaced_index);
@@ -397,7 +367,6 @@ function import_insert(com_dict,text){
     }
     else{
       if(com_dict["name"].indexOf(".") !== -1 && com_dict["name"].split(".")[1].length != 0 && ! dot_change_flag) {
-        console.error("yatta")
         let command_index  = indexToPosition(text, txt_editor.getCursorPosition());
         let lastLine = text.substring(0, command_index+1).split("\n").slice(-1);
         command_index -= (lastLine.indexOf(com_dict["name"])+com_dict["name"].length-1);
@@ -808,12 +777,10 @@ function AutoLearning(data){
 }
 
 window.api.on("file_change", (event,path)=>{
-    console.log("change"+path);
     readFile(path.replaceAll("\\", "/"), path.replaceAll("\\", "/"));
 });
 
 window.api.on("file_delete", (event,path)=>{
-    console.log("delete"+path);
     document.querySelector(`.tab[data-fullpath="${path.replaceAll('\\','/').toLocaleLowerCase()}"]`).textContent = window.requires.path.basename(path)+"(削除済み)";
     let button_em = document.createElement('button');
     button_em.innerHTML = "X";
@@ -827,7 +794,7 @@ window.api.on("open_new_file", function(event,path){
 function open_file(){
   window.api.openLoadFile();
   let em = create_tab();
-  em.dataset.status = "if can't fileRead then delete";
+  // em.dataset.status = "if can't fileRead then delete";
   const path = em.dataset.fullpath;
   get_focus(path);
   // get_focus();
@@ -1248,9 +1215,11 @@ function readFile(path, replacement = tab_opend_path) {
   const text = fs.readFileSync(path, 'utf8');
   const tab = document.querySelector(`.tab[data-fullpath="${replacement}"]`);
   if( document.querySelector(`.tab[data-fullpath="${path}"]`) !== null){
-      if(tab.dataset.status === "if can't fileRead then delete"){
-          tab.querySelector("button").click();
-      }
+      // if(tab.dataset.status === "if can't fileRead then delete" && tab.dataset.fullpath.indexOf("unnamed") === 0){
+      //     tab.querySelector("button").click();
+      // }else{
+      //   tab.dataset.status  = "";
+      // }
   }
   else{
       
