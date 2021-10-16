@@ -19,6 +19,7 @@ let select_tab = "";//開いてるタブの要素
 let debugMode = false;
 let onctrl = false;
 var chileds;
+  
 function play_tab(){
     window.requires.exe.exec(`python ${tab_opend_path}`,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{
                   info_in_footer(stdout.replaceAll("\\\\","/"),5000);
@@ -336,7 +337,6 @@ function import_insert(com_dict,text){
     }
     else if( com_dict["update"]["if"] != null && insert_text.indexOf(com_dict["update"]["if"]) != -1){
         replaced_index = insert_text.indexOf(com_dict["update"]["if"]);
-        // console.info(postionToIdnex(text,index))
         line = insert_text.substring(replaced_index).split("\n")[0]+","+com_dict["update"]["add"]+"\n";//+insert_text.substring(index).split("\n").slice(1).join("\n")
         let lastLine = insert_text.substring(replaced_index).split("\n")[0];
         let replaced_pos = postionToIdnex(text, replaced_index);
@@ -367,7 +367,6 @@ function import_insert(com_dict,text){
     }
     else{
       if(com_dict["name"].indexOf(".") !== -1 && com_dict["name"].split(".")[1].length != 0 && ! dot_change_flag) {
-        console.error("yatta")
         let command_index  = indexToPosition(text, txt_editor.getCursorPosition());
         let lastLine = text.substring(0, command_index+1).split("\n").slice(-1);
         command_index -= (lastLine.indexOf(com_dict["name"])+com_dict["name"].length-1);
@@ -776,13 +775,26 @@ function AutoLearning(data){
   });
 
 }
+
+window.api.on("file_change", (event,path)=>{
+    readFile(path.replaceAll("\\", "/"), path.replaceAll("\\", "/"));
+});
+
+window.api.on("file_delete", (event,path)=>{
+    document.querySelector(`.tab[data-fullpath="${path.replaceAll('\\','/').toLocaleLowerCase()}"]`).textContent = window.requires.path.basename(path)+"(削除済み)";
+    let button_em = document.createElement('button');
+    button_em.innerHTML = "X";
+    button_em.onclick = delete_tab;
+    document.querySelector(`.tab[data-fullpath="${path.replaceAll('\\','/').toLocaleLowerCase()}"]`).appendChild(button_em);
+});
+
 window.api.on("open_new_file", function(event,path){
   open_file();
 });
 function open_file(){
   window.api.openLoadFile();
   let em = create_tab();
-  em.dataset.status = "if can't fileRead then delete";
+  // em.dataset.status = "if can't fileRead then delete";
   const path = em.dataset.fullpath;
   get_focus(path);
   // get_focus();
@@ -1189,19 +1201,25 @@ function onLoad() {
 }
 function readFile(path, replacement = tab_opend_path) {
   path = path.toLowerCase() ;
+  replacement = replacement.toLocaleLowerCase();
   const editor = document.querySelector(`.editor[data-fullpath="${replacement}"]`);
   path = path.replaceAll("\\", "/");
   editor.dataset.fullpath = path;
   if(!fs.existsSync(path)) return;
   tab_widths[path] = tab_widths[replacement];
   editor_dict[path] = editor_dict[replacement];
-  remove_tab_info(replacement);
+  if(path !== replacement){
+    window.api.chokidar_path_add(path);
+    remove_tab_info(replacement);
+  }
   const text = fs.readFileSync(path, 'utf8');
   const tab = document.querySelector(`.tab[data-fullpath="${replacement}"]`);
   if( document.querySelector(`.tab[data-fullpath="${path}"]`) !== null){
-      if(tab.dataset.status === "if can't fileRead then delete"){
-          tab.querySelector("button").click();
-      }
+      // if(tab.dataset.status === "if can't fileRead then delete" && tab.dataset.fullpath.indexOf("unnamed") === 0){
+      //     tab.querySelector("button").click();
+      // }else{
+      //   tab.dataset.status  = "";
+      // }
   }
   else{
       

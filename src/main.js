@@ -1,11 +1,7 @@
 // アプリケーション作成用のモジュールを読み込み
-// let doc =require("../../ace/lib/ace/document.js")
-// import {ace_Document} from "./src/document.js";
-// console.log(ace_Document)
-// // C:\Users\taiki\desktop\program\elecron\150819_electron_text_editor\src\main.js
 const electron = require('electron');
 const parseArgs = require('electron-args');
-
+var watcher = null;
 const cli = parseArgs(`
     sample-app
 
@@ -43,18 +39,10 @@ const cli = parseArgs(`
         user_custom: false,
     }
 });
-console.log(cli.flags);
-console.log(cli.input[0]);
 const args = cli.input;
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
-// const storage = require('electron-json-storage');
-// storage.get('./py.json', function(error, data) { // 読み込みしてHTMLに書き出す
-//     if (error) throw error;
-//     console.log(data.os);
-//     console.log(data.site_url);
-// });
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
@@ -198,10 +186,6 @@ function onload(){
   mainWindow = createWindow(template);
   const localShortcut = require("electron-localshortcut");
   const { ipcMain, globalShortcut } = require('electron');
-  console.log("a");
-  // console.log(globalShortcut.isRegistered('Ctrl+numsub'))
-  console.log("v");
-    // dialog.showMessageBoxSync(mainWindow,()=>{});
   const log = require('electron-log');
   let shortcut = JSON.parse(fs.readFileSync(__dirname+'/user_custom/shortcut.jsonc', 'utf8'));
   for(const key of Object.keys(shortcut)){
@@ -255,7 +239,6 @@ function onload(){
             slashes: true
         }));
         ipcMain.on("input_window_send",(e,command)=>{
-            console.log(command);
             window.hide();
              mainWindow.webContents.send("set_remote_command", command);
             
@@ -268,9 +251,6 @@ function onload(){
  * 新規ファイルを保存します。
  */
  function saveNewFile(data) {
-  // writeFile("./aa.py","unk")
-  console.log("行くよ")
-  console.log(data)
   const win = mainWindow
   let result = dialog.showSaveDialogSync(
     mainWindow,
@@ -285,7 +265,6 @@ function onload(){
       ]
     },
   )
-  console.log(result);
   if(result !== undefined){
         currentPath = result;
         writeFile(currentPath, data);
@@ -315,47 +294,33 @@ function onload(){
 
   const win = mainWindow;
 
-  // let response = dialog.showMessageBoxSync(win, {
-  //     title: 'ファイルの上書き保存を行います。',
-  //     type: 'info',
-  //     buttons: ['OK', 'Cancel'],
-  //     detail: '本当に保存しますか？'
-  //   }
-  // );
-  // console.log(response);
-  // if(response === 0){
-  // }
   writeFile(currentPath, data);
-  console.log(currentPath);
   return currentPath;
   }
 function pyright_check(currentPath){
   return true;
   require("child_process").exec(`npx pyright ${currentPath}`, { encoding: 'Shift_JIS' },(errs,stdout,stderr)=>{
     
-    // console.log("err"+err);
+
     const Encoding = require('encoding-japanese');
 
     stdout =Encoding.convert(stdout, { from: 'SJIS', to: 'UNICODE', type: 'string' });
-    stdout = stdout.substring(stdout.match("[1-9]+:[1-9]+").index).split("-")
-    console.log("stdout"+stdout);
+    stdout = stdout.substring(stdout.match("[1-9]+:[1-9]+").index).split("-");
     const out = stdout;
     
-    })
+    });
 }
 
 
   ipcMain.handle('create_local_shk', (event, arg) => {  // channel名は「asynchronous-message」
-    console.log(arg)
-    let obj = BrowserWindow.getFocusedWindow()
+    let obj = BrowserWindow.getFocusedWindow();
     obj = JSON.parse(JSON.stringify(obj));
-    return obj
-  })
+    return obj;
+  });
 
-function logPosition(event) {			console.log("screenX: " + event.screenX);			console.log("screenY: " + event.screenY);		}
-electron.app.on('mousemove', logPosition);
-console.log("kaminoko")
-  
+// function logPosition(event) {			console.log("screenX: " + event.screenX);			console.log("screenY: " + event.screenY);		}
+// electron.app.on('mousemove', logPosition);
+
   localShortcut.register(mainWindow, 'Ctrl+Q', function() {
     app.quit();
   });
@@ -371,7 +336,42 @@ console.log("kaminoko")
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  
   mainWindow.on('ready-to-show', ()=>console.log("reesd"));
+     
+    //require
+   var chokidar = require("chokidar");
+    ipcMain.on("chokidar_path_add", (event, path) => {
+        if(watcher === null){
+        watcher = chokidar.watch(path,{
+            ignored:/[\/\\]\./,
+            persistent:true
+        });
+
+       //イベント定義
+   watcher.on('ready',function(){
+       
+
+       
+    watcher.on('change',function(path){
+        mainWindow.webContents.send("file_change", path);
+       //  file_changed(path);
+        });
+    watcher.on('unlink',function(path){
+        mainWindow.webContents.send("file_delete", path);
+       //  file_deleted(path);
+        });
+    });
+
+    }else{
+      watcher.add(path);
+    }
+    
+    });
+   
+
+   
 }
 
 //  初期化が完了した時の処理

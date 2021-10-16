@@ -32,6 +32,7 @@
 	},
 	"dependencies": {
 		"ace-builds": "^1.4.12",
+		"chokidar": "^3.5.2",
 		"electron-args": "^0.1.0",
 		"electron-json-storage": "^4.5.0",
 		"electron-localshortcut": "^3.2.1",
