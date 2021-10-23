@@ -46,6 +46,7 @@ const Menu = electron.Menu;
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
+const localShortcut = require("electron-localshortcut");
 // console.log(fs.statSync(".").isDirectory())
 const dialog = electron.dialog;
 let currentPath = "";
@@ -185,15 +186,9 @@ function onload(){
 
 
   mainWindow = createWindow(template);
-  const localShortcut = require("electron-localshortcut");
   const { ipcMain, globalShortcut } = require('electron');
   const log = require('electron-log');
-  let shortcut = JSON.parse(fs.readFileSync(__dirname+'/user_custom/shortcut.jsonc', 'utf8'));
-  for(const key of Object.keys(shortcut)){
-    localShortcut.register(mainWindow, key,()=>{
-      mainWindow.webContents.send(key);
-    });
-  }
+
     localShortcut.register(mainWindow, "F12",()=>{
         if(mainWindow.isDevToolsOpened() === true){
             mainWindow.closeDevTools();
@@ -211,8 +206,6 @@ function onload(){
   });
   
   async function isDirs(event, args){
-      console.log(event);
-      console.log(args);
     dirFlagList = [];
     for(const pathName of args){
         dirFlagList.push(fs.statSync(pathName).isDirectory());
@@ -327,10 +320,10 @@ function pyright_check(currentPath){
 }
 
 
-  ipcMain.handle('create_local_shk', (event, arg) => {  // channel名は「asynchronous-message」
-    let obj = BrowserWindow.getFocusedWindow();
-    obj = JSON.parse(JSON.stringify(obj));
-    return obj;
+  ipcMain.handle('create_local_shk', (event, key) => { 
+    localShortcut.register(mainWindow, key,()=>{
+      mainWindow.webContents.send(key);
+    });
   });
   
 

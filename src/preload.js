@@ -5,8 +5,8 @@ contextBridge.exposeInMainWorld(
         send: (data) => {
             ipcRenderer.send("asynchronous-message", data);
         },
-        create_local_shk: async()=>
-            await ipcRenderer.invoke('create_local_shk',""),
+        create_local_shk: async(key)=>
+            await ipcRenderer.invoke('create_local_shk', key),
         on: (channel, callback) => ipcRenderer.on(channel, (event, argv)=>callback(event, argv)),
         saveFile: async(data,path) =>{
             let i = await ipcRenderer.invoke("savefile", data,path);

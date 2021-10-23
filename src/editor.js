@@ -1161,6 +1161,7 @@ function onLoad() {
     if(debugMode === false){
       let shortcut = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/shortcut.jsonc', 'utf8'));
       for(const key of Object.keys(shortcut)){
+        window.api.create_local_shk(key);
         window.api.on(key,()=>{
             // try{
                 eval(shortcut[key]);
