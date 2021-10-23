@@ -18,6 +18,7 @@ let input_int = false;//typingを追記しないように後日使用予定
 let select_tab = "";//開いてるタブの要素
 let debugMode = false;
 let onctrl = false;
+let isOwnSaved = false;
 var chileds;
   
 function play_tab(){
@@ -777,7 +778,12 @@ function AutoLearning(data){
 }
 
 window.api.on("file_change", (event,path)=>{
-    readFile(path.replaceAll("\\", "/"), path.replaceAll("\\", "/"));
+    console.log("isOwnSaved"+isOwnSaved);
+    if(! isOwnSaved){
+        readFile(path.replaceAll("\\", "/"), path.replaceAll("\\", "/"));
+    }else{
+      isOwnSaved = false;
+    }
 });
 
 window.api.on("file_delete", (event,path)=>{
@@ -1005,12 +1011,14 @@ function move_tab(vector){
 function isUnamed(name){
   return name.indexOf("/") === -1 && name.indexOf("\\") === -1 && name.indexOf("unnamed") !== -1;
 }
-function saveFile(saveValue) {
+async function saveFile(saveValue) {
   if(saveValue === last_saves[tab_opend_path]){
     return;
   } 
   last_saves[tab_opend_path] = saveValue;
-  window.api.saveFile(saveValue,tab_opend_path).then((path) => {
+  isOwnSaved = true;
+  let  path = await window.api.saveFile(saveValue,tab_opend_path);
+
     for (const tab of document.querySelectorAll(".tab")){
       const textContent = tab.dataset.fullpath;
       if(textContent === tab_opend_path){
@@ -1030,10 +1038,80 @@ function saveFile(saveValue) {
     }
     get_focus(path);
     AutoLearning(txt_editor.session.getValue());
-  });
 }
 function getSettings(key) {
   return  JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/settings.json', 'utf8'))[key];
+
+}
+async function open_args(){
+    let args = await window.api.get_args();
+    const custom_list = {
+      "import":window.requires.dirname+"/user_custom/py.json",
+      "type":window.requires.dirname+'/user_custom/py_type.json',
+      "shortcut":window.requires.dirname+'/user_custom/shortcut.jsonc',
+      "settings":window.requires.dirname+"/user_custom/settings.json"
+      };
+    debugMode = args["Debugflag"];
+    if(debugMode){
+      const open_files = getSettings("debug_open_files");
+      if(open_files == undefined){
+        open_files = [
+          ...Object.values(custom_list),
+          window.requires.dirname+"/index.html",
+          window.requires.dirname+"/main.js",
+          window.requires.dirname+"/editor.js"
+        ];
+      }
+      args["Others"].push(...open_files)
+      }
+    if(args["UserCustom"] !== undefined){
+      const input =  args["UserCustom"];
+      for(const falias_key of Object.keys(custom_list)){
+        if(falias_key.indexOf(input) === 0){
+          args["Others"].push(custom_list[falias_key]);
+          break;
+        }
+      }
+    }
+    backup_file = window.requires.dirname+"/.backup/save.json";
+    if(fs.existsSync(backup_file)){
+        args["Others"] = args["Others"].concat(Object.keys(JSON.parse(fs.readFileSync(backup_file, "utf8"))));
+    }
+    if(args["Others"].length !== 0){
+      let first_flag = true;
+      let first_file = "";
+      DirFlags  = await window.api.isDirs(args["Others"]);
+      args["Others"] = args["Others"].filter((elm, index) =>!DirFlags[index]);
+      for(let fpath of args["Others"]){
+        fpath = fpath.replaceAll("\\", "/");
+        const exsits_flag = fs.existsSync(fpath);
+        if(exsits_flag === false){//ディレクトリの対応する
+          fs.writeFileSync(fpath, '');
+        }
+        let em = create_tab().dataset.fullpath;
+        const fullpath = get_path(fpath);
+        readFile(fullpath, em);
+        if(first_flag){
+          first_flag = false;
+          first_file = fullpath;
+          }
+      }
+      
+      get_focus(first_file);
+    }else{
+      create_tab();
+      get_focus("unnamed1");
+    }
+    if(fs.existsSync(backup_file)){
+        cust_onchange_off();
+        const dict = JSON.parse(fs.readFileSync(backup_file, "utf8"));
+        for(const key of Object.keys(dict)){
+             editor_dict[key].session.setValue(dict[key]["writeend"]);
+              }
+            cust_onchange_on();
+        }
+        
+     cust_onchange_on(); 
 
 }
 function onLoad() {
@@ -1078,74 +1156,7 @@ function onLoad() {
     fs = window.requires.fs;
     py_imports = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/py.json', 'utf8'));
     py_typers = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/py_type.json', 'utf8'));
-    window.api.get_args().then((args) => {
-      const custom_list = {
-        "import":window.requires.dirname+"/user_custom/py.json",
-        "type":window.requires.dirname+'/user_custom/py_type.json',
-        "shortcut":window.requires.dirname+'/user_custom/shortcut.jsonc',
-        "settings":window.requires.dirname+"/user_custom/settings.json"
-        };
-      debugMode = args["Debugflag"];
-      if(debugMode){
-        const open_files = getSettings("debug_open_files");
-        if(open_files == undefined){
-          open_files = [
-            ...Object.values(custom_list),
-            window.requires.dirname+"/index.html",
-            window.requires.dirname+"/main.js",
-            window.requires.dirname+"/editor.js"
-          ];
-        }
-        args["Others"].push(...open_files)
-        }
-      if(args["UserCustom"] !== undefined){
-        const input =  args["UserCustom"];
-        for(const falias_key of Object.keys(custom_list)){
-          if(falias_key.indexOf(input) === 0){
-            args["Others"].push(custom_list[falias_key]);
-            break;
-          }
-        }
-      }
-      backup_file = window.requires.dirname+"/.backup/save.json";
-      if(fs.existsSync(backup_file)){
-          args["Others"] = args["Others"].concat(Object.keys(JSON.parse(fs.readFileSync(backup_file, "utf8"))));
-      }
-      if(args["Others"].length !== 0){
-        let first_flag = true;
-        let first_file = "";
-        for(let fpath of args["Others"]){
-          fpath = fpath.replaceAll("\\", "/");
-          const exsits_flag = fs.existsSync(fpath);
-          if(exsits_flag === false){//ディレクトリの対応する
-            fs.writeFileSync(fpath, '');
-          }
-          let em = create_tab().dataset.fullpath;
-          const fullpath = get_path(fpath);
-          readFile(fullpath, em);
-          if(first_flag){
-            first_flag = false;
-            first_file = fullpath;
-          }
-        }
-        
-        get_focus(first_file);
-      }else{
-        create_tab();
-        get_focus("unnamed1");
-      }
-      if(fs.existsSync(backup_file)){
-          cust_onchange_off();
-          const dict = JSON.parse(fs.readFileSync(backup_file, "utf8"));
-          for(const key of Object.keys(dict)){
-               editor_dict[key].session.setValue(dict[key]["writeend"]);
-                }
-              cust_onchange_on();
-          }
-          
-       cust_onchange_on();   
-      
-    });
+    open_args();
     // shorthcut 作成 デバッグモードでは使用しないよう
     if(debugMode === false){
       let shortcut = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/shortcut.jsonc', 'utf8'));

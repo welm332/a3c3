@@ -46,6 +46,7 @@ const Menu = electron.Menu;
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
+// console.log(fs.statSync(".").isDirectory())
 const dialog = electron.dialog;
 let currentPath = "";
 
@@ -208,8 +209,20 @@ function onload(){
       Others:args
     };
   });
+  
+  async function isDirs(event, args){
+      console.log(event);
+      console.log(args);
+    dirFlagList = [];
+    for(const pathName of args){
+        dirFlagList.push(fs.statSync(pathName).isDirectory());
+    }
+    return dirFlagList;
+}
+  
+  ipcMain.handle("isDirs", isDirs);
   ipcMain.handle("savefile",(event, data,path) => {
-    currentPath = path
+    currentPath = path;
     const result = saveFile(data);
     return result;
   });
@@ -281,6 +294,8 @@ function onload(){
     }
   });
 }
+
+
 /**
  * ファイルを保存します。
  */
@@ -317,6 +332,7 @@ function pyright_check(currentPath){
     obj = JSON.parse(JSON.stringify(obj));
     return obj;
   });
+  
 
 // function logPosition(event) {			console.log("screenX: " + event.screenX);			console.log("screenY: " + event.screenY);		}
 // electron.app.on('mousemove', logPosition);

@@ -28,19 +28,22 @@ contextBridge.exposeInMainWorld(
     },
         chokidar_path_add: (path) => {
             ipcRenderer.send("chokidar_path_add", path)
-        }
+        },
+        isDirs: async (args) => await ipcRenderer.invoke("isDirs", args),
 
     },
 
 );
 contextBridge.exposeInMainWorld(
     "requires",{
+        cs:contextBridge,
         dirname:__dirname,
         fs: require('fs'),
         exe: require("child_process"),
         sudo_exe:require("sudo-prompt"),
         Renderer:ipcRenderer,
         path:require("path"),
-        shortcut_path:require('windows-shortcuts-ps')
+        shortcut_path:require('windows-shortcuts-ps'),
+        Encoding: require('encoding-japanese')
     }
 );

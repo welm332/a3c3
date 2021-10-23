@@ -19,6 +19,7 @@
 	},
 	"scripts": {
 		"start": "electron .",
+		"dirtest": "electron . ./src/main.js ./src/ . ./src/editor.js ./Gifs ./installer",
 		"install": "electron installer/main.js",
 		"build:inst:win": "electron-builder   -w --x64",
 		"build:inst:mac": "electron-builder   -m --x64",
