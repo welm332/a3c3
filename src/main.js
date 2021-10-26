@@ -376,6 +376,7 @@ function pyright_check(currentPath){
     }else{
       watcher.add(path);
     }
+    console.log(path);
     
     });
    

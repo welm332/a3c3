@@ -20,6 +20,8 @@ let debugMode = false;
 let onctrl = false;
 let isOwnSaved = false;
 var chileds;
+let palette_commands = null; 
+const file_change_methods  = {};
   
 function play_tab(){
     window.requires.exe.exec(`python ${tab_opend_path}`,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{
@@ -204,7 +206,7 @@ function create_search_window(){//検索窓の作成
   div.style.marginRight = "-50%";
   div.style.transform = "translate(-50%, -50%)";
   
-  const palette_commands = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/palette_commands.json', 'utf8'));
+//   const palette_commands = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/palette_commands.json', 'utf8'));
   const datalist = document.createElement("datalist");
   datalist.id = "commandLists";
   for(const key of Object.keys(palette_commands)){
@@ -226,7 +228,6 @@ function create_search_window(){//検索窓の作成
     function (event) {
       if (event.key === "Enter") {
           const key = event.target.value;
-          const palette_commands = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/palette_commands.json', 'utf8'));
           if(palette_commands[key] !== undefined){
               eval(palette_commands[key]);
               delete_tab(event);
@@ -781,11 +782,11 @@ function AutoLearning(data){
 
 window.api.on("file_change", (event,path)=>{
     console.log("isOwnSaved"+isOwnSaved);
-    if(! isOwnSaved){
-        readFile(path.replaceAll("\\", "/"), path.replaceAll("\\", "/"));
-    }else{
-      isOwnSaved = false;
-    }
+    path = path.replaceAll("\\", "/");
+    console.log(path);
+    console.log(file_change_methods[path]);
+    file_change_methods[path](path);
+
 });
 
 window.api.on("file_delete", (event,path)=>{
@@ -1157,7 +1158,26 @@ function onLoad() {
 }
     fs = window.requires.fs;
     py_imports = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/py.json', 'utf8'));
+    
+    window.api.chokidar_path_add(window.requires.dirname+'/user_custom/py.json');
+    file_change_methods[window.requires.dirname.replaceAll("\\", "/")+'/user_custom/py.json'] = (path)=>{
+        py_imports = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/py.json', 'utf8'));
+    }
+    
+
     py_typers = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/py_type.json', 'utf8'));
+    window.api.chokidar_path_add(window.requires.dirname+'/user_custom/py_type.json');
+    file_change_methods[window.requires.dirname.replaceAll("\\", "/")+'/user_custom/py_type.json'] = (path)=>{
+        py_typers = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/py_type.json', 'utf8'));
+    }
+    
+    
+    palette_commands = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/palette_commands.json', 'utf8'));
+    
+    window.api.chokidar_path_add(window.requires.dirname+'/user_custom/palette_commands.json');
+    file_change_methods[window.requires.dirname.replaceAll("\\", "/")+'/user_custom/palette_commands.json'] = (path)=>{
+        palette_commands = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/palette_commands.json', 'utf8'));
+    }
     open_args();
     // shorthcut 作成 デバッグモードでは使用しないよう
     if(debugMode === false){
@@ -1224,6 +1244,13 @@ function readFile(path, replacement = tab_opend_path) {
   editor_dict[path] = editor_dict[replacement];
   if(path !== replacement){
     window.api.chokidar_path_add(path);
+    file_change_methods[path] = (path)=>{
+        if(! isOwnSaved){
+            readFile(path.replaceAll("\\", "/"), path.replaceAll("\\", "/"));
+        }else{
+            isOwnSaved = false;
+        }
+    }
     remove_tab_info(replacement);
   }
   const text = fs.readFileSync(path, 'utf8');

@@ -2,6 +2,9 @@
 const { contextBridge, ipcRenderer, BrowserWindow} = require("electron");
 contextBridge.exposeInMainWorld(
     "api", {
+        electron_cmds:(method)=>{
+            console.log(require("electron"))
+        },
         send: (data) => {
             ipcRenderer.send("asynchronous-message", data);
         },
