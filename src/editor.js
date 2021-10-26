@@ -148,9 +148,11 @@ function loadhtml(element, path){
     element.parentNode.replaceChild( clone , element ); //すげ替え。
     // clone.appendChild(html.body);
     // return
-    chileds = html.body.children;
-    for(let i=0,len=chileds.length;i<len;i++){
-        clone.appendChild(chileds[i]);
+    // return html
+    chileds = Array(...html.head.children).concat(Array(...html.body.children));
+    // console.log(chileds)
+    for(const child of chileds){
+        clone.appendChild(child);
     }
 }
 function open_setting_page(){
@@ -1077,11 +1079,11 @@ async function open_args(){
     if(fs.existsSync(backup_file)){
         args["Others"] = args["Others"].concat(Object.keys(JSON.parse(fs.readFileSync(backup_file, "utf8"))));
     }
+    const DirFlags  = await window.api.isDirs(args["Others"]);
+    args["Others"] = args["Others"].filter((elm, index) =>!DirFlags[index]);
     if(args["Others"].length !== 0){
       let first_flag = true;
       let first_file = "";
-      DirFlags  = await window.api.isDirs(args["Others"]);
-      args["Others"] = args["Others"].filter((elm, index) =>!DirFlags[index]);
       for(let fpath of args["Others"]){
         fpath = fpath.replaceAll("\\", "/");
         const exsits_flag = fs.existsSync(fpath);
