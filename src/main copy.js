@@ -1,8 +1,8 @@
 // アプリケーション作成用のモジュールを読み込み
 const electron = require('electron');
 const {dialog}  = require("electron");
+console.log(dialog);
 const parseArgs = require('electron-args');
-// console.log(ext-language_tools)
 var watcher = null;
 const cli = parseArgs(`
     sample-app
@@ -76,8 +76,7 @@ function createWindow(template=null,width=800,height=600) {
     webPreferences: { 
       nodeIntegration: false, //ここはfalseのまま
       contextIsolation: true,  //trueのまま(case2と違う)
-      preload: __dirname + '/preload.js', //preloadするjs指定,
-      webviewTag: true
+      preload: __dirname + '/preload.js' //preloadするjs指定
   },
   defaultFontSize:30
 });
@@ -208,19 +207,6 @@ function onload(){
     };
   });
   
-  
-    ipcMain.handle("ShowMessageBox", async (event, type="info", title="demo", message="demoです", detail="demo", buttons=["ok", "cancel"]) =>{
-        const options = {
-            type:type,
-            title:title,
-            message:message,
-            detail:detail,
-            buttons: buttons,
-            cancelId: -1  // Esc で閉じられたときの戻り値
-        };
-        return dialog.showMessageBoxSync(options);
-    });
-  
   async function isDirs(event, args){
     dirFlagList = [];
     for(const pathName of args){
@@ -338,46 +324,9 @@ function pyright_check(currentPath){
 
   ipcMain.handle('create_local_shk', (event, key) => { 
     localShortcut.register(mainWindow, key,()=>{
-        mainWindow.webContents.send(key);
-        // event.preventDefault();
+      mainWindow.webContents.send(key);
     });
   });
-  
-  
-    ipcMain.handle('delete_local_shk', (event, key) => { 
-        localShortcut.unregister(mainWindow, key);
-    });
-  
-  
-    ipcMain.handle('create_process_shell', (event, process, pname) => { 
-        console.log(process)
-        const spawnTest = (() => {
-            const dir = require("child_process").spawn(process, {shell: true});       // <== shell: true option
-            dir.stdout.on('data', (data) => {
-                mainWindow.webContents.send(`child_process_session::${pname}`,{"name":pname,"type":"out","data":data});
-              console.log(`spawn stdout: ${data}`);
-            });
-          
-            dir.stderr.on('data', (data) => {
-                mainWindow.webContents.send(`child_process_session::${pname}`,{"name":pname,"type":"stderr","data":data});
-            });
-          
-            dir.on('error', (code) => {
-                mainWindow.webContents.send(`child_process_session::${pname}`,{"name":pname,"type":"error","data":code});
-            });
-          
-            dir.on('close', (code) => {
-                mainWindow.webContents.send(`child_process_session::${pname}`,{"name":pname,"type":"close","data":code});
-            });
-          
-            dir.on('exit', (code) => {
-                mainWindow.webContents.send(`child_process_session::${pname}`,{"name":pname,"type":"exit","data":code});
-            });
-            ipcMain.handle(`child_process_session_stdin::${pname}`, (event ,msg ) => {
-                console.log(msg)
-                dir.stdin.write(msg);
-                
-          })})();})
   
 
 // function logPosition(event) {			console.log("screenX: " + event.screenX);			console.log("screenY: " + event.screenY);		}

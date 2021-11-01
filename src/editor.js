@@ -111,6 +111,7 @@ function create_editor(element){
     enableLinking: true
   })
   ace.require('ace/ext/settings_menu').init(txt_editor);
+//   element.style.display = 'none';
     return editor;
 }
 function delete_tab(event){
@@ -148,6 +149,7 @@ function loadhtml(element, path){
     
     const clone = element.cloneNode( false ); //ガワだけ複製して…
     element.parentNode.replaceChild( clone , element ); //すげ替え。
+    clone.style.display = 'none';
     // clone.appendChild(html.body);
     // return
     // return html
@@ -230,14 +232,17 @@ function create_search_window(){//検索窓の作成
           const key = event.target.value;
           if(palette_commands[key] !== undefined){
               eval(palette_commands[key]);
-              delete_tab(event);
+              event.target.parentElement.remove();
           }
     }  
   }
 
   let button_em = document.createElement('button');
   button_em.innerHTML = "X";
-  button_em.onclick = delete_tab;
+  button_em.onclick = (event)=>{
+      event.target.parentElement.remove();
+      
+  };
   div.appendChild(txt_em);
   div.appendChild(button_em);
 
@@ -254,14 +259,18 @@ function editor_write(commandLists){
   cust_onchange_on();
 }
 function cust_onchange_off(){
+    // console.log("offりました")
   if(txt_editor !== null){
 
     txt_editor._eventRegistry.change = [txt_editor._eventRegistry.change[0]];
   }
 }
 function cust_onchange_on(){
+    // console.log("ONりました");
+    // console.log(debugMode);
   if(txt_editor !== null){
-  debugMode || txt_editor.on('change', Onchange);
+        // console.log(txt_editor);
+        txt_editor.on('change', Onchange);
   }
 }
 function txt_size_up(){
@@ -508,7 +517,7 @@ function create_tab(){
   text_list[`unnamed${i}`] = "";
   last_saves[`unnamed${i}`] = "";
   // tab_opend_path = `unnamed${i}`;
-  new_tab.innerHTML = `unnamed${i}<button class='delete'>X</button>`;
+  new_tab.innerHTML = `<div id="tab_name" style="display: inline-block;" >unnamed${i}</div><button class='delete'>X</button>`;
   new_tab.className = "tab";
   new_editor.className = "editor";
   // txt_editor.session.setValue("");
@@ -785,7 +794,9 @@ window.api.on("file_change", (event,path)=>{
     path = path.replaceAll("\\", "/");
     console.log(path);
     console.log(file_change_methods[path]);
-    file_change_methods[path](path);
+    if(file_change_methods[path] !== undefined){
+        file_change_methods[path](path);
+    }
 
 });
 
@@ -996,6 +1007,7 @@ function get_focus(textContent){
     }
     tab.style.border= ` 3px outset ${color}`;
   }
+  cust_onchange_on();
 }
 function move_tab(vector){
   let lis = document.querySelectorAll(".tab");
@@ -1025,7 +1037,7 @@ async function saveFile(saveValue) {
     for (const tab of document.querySelectorAll(".tab")){
       const textContent = tab.dataset.fullpath;
       if(textContent === tab_opend_path){
-        tab.innerHTML = window.requires.path.basename(path.replaceAll("\\", "/"))+"<button class='delete'>X</button>";
+        tab.innerHTML = `<div id="tab_name" style="display: inline-block;">${window.requires.path.basename(path.replaceAll("\\", "/"))}</div><button class='delete'>X</button>`;
         tab.querySelector("button").onclick = delete_tab;
         path = path.replaceAll("\\", "/");
         tab.dataset.fullpath  = path;
@@ -1266,7 +1278,7 @@ function readFile(path, replacement = tab_opend_path) {
       
     tab.dataset.fullpath = path;
     tab.title = path;
-    tab.innerHTML = window.requires.path.basename(path.replaceAll("\\", "/"))+"<button class='delete'>X</button>";
+    tab.innerHTML = `<div id="tab_name" style="display: inline-block;">${window.requires.path.basename(path.replaceAll("\\", "/"))}</div><button class='delete'>X</button>`;
     tab.querySelector("button").onclick = delete_tab;
     }
 
