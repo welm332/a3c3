@@ -39,6 +39,7 @@ contextBridge.exposeInMainWorld(
             await ipcRenderer.invoke('create_process_shell',process, name),
         child_process_session_stdin: async(msg,pname)=>
             await ipcRenderer.invoke(`child_process_session_stdin::${pname}`, msg),
+        env: async(name)=>process.env[name]
             
     },
 
@@ -56,6 +57,7 @@ contextBridge.exposeInMainWorld(
         shortcut_path:require('windows-shortcuts-ps'),
         Encoding: require('encoding-japanese'),
         iconv:require("iconv-lite"),
+    
         // lang:require("../node_modules/ace-builds/src/ext-language_tools.js")
         // util:require("C:/Users/taiki/Desktop/program/portfolio/150819_electron_text_editor/node_modules/ace-builds/demo/kitchen-sink/autocomplete/util")
     }
