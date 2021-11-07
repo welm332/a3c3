@@ -38,5 +38,41 @@
 	"np.": {
 		"alias": "numpy.",
 		"name": "np"
+	},
+	"random.": {
+		"name": "random.",
+		"code": "import random\n",
+		"replace": "",
+		"sule": [
+			"from random",
+			"import random"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"json.": {
+		"name": "json.",
+		"code": "import json\n",
+		"replace": "",
+		"sule": [
+			"from json",
+			"import json"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"requests.": {
+		"name": "requests.",
+		"code": "import requests\n",
+		"replace": "",
+		"sule": [
+			"from requests",
+			"import requests"
+		],
+		"update": {
+			"if": null
+		}
 	}
 }

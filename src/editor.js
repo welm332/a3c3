@@ -22,13 +22,6 @@ let isOwnSaved = false;
 var chileds;
 let palette_commands = null; 
 const file_change_methods  = {};
-  
-function play_tab(){
-    window.requires.exe.exec(`python ${tab_opend_path}`,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{
-                  info_in_footer(stdout.replaceAll("\\\\","/"),5000);
-          
-                  });
-}
     
 function close_saving(){
     const file_saving_dict  = {};
@@ -114,16 +107,19 @@ function create_editor(element){
 //   element.style.display = 'none';
     return editor;
 }
-function delete_tab(event){
+async function delete_tab(event){
     let target_tab = "";
     let parent = event.target.parentElement;
-    while(true){
-        if(parent.className === "tab"){
-            target_tab = parent;
-            break;
-        }else{
-            parent = parent.parentElement;
+    if(parent.className === "tab"){
+        target_tab = parent;
+    }else{
+        const fullpath = parent.parentElement.dataset.fullpath;
+        const user_select = Math.abs(await window.api.show_message_box("question","確認","消す前の確認",`セーブしていないタブ\n${fullpath}を閉じてもよろしいでしょうか?`,["閉じる", "中断","セーブして閉じる"]));
+        if(user_select === 1) return
+        if(user_select === 2){
+            saveFile(editor_dict[fullpath].session.getValue(), fullpath);
         }
+        target_tab = parent.parentElement;
     }
     if(target_tab.dataset.fullpath === tab_opend_path){
       if((index = tab_open_log.indexOf(target_tab.dataset.fullpath)) !== -1){
@@ -1026,17 +1022,17 @@ function move_tab(vector){
 function isUnamed(name){
   return name.indexOf("/") === -1 && name.indexOf("\\") === -1 && name.indexOf("unnamed") !== -1;
 }
-async function saveFile(saveValue) {
-  if(saveValue === last_saves[tab_opend_path]){
+async function saveFile(saveValue, filepath=tab_opend_path) {
+  if(saveValue === last_saves[filepath]){
     return;
   } 
-  last_saves[tab_opend_path] = saveValue;
+  last_saves[filepath] = saveValue;
   isOwnSaved = true;
-  let  path = await window.api.saveFile(saveValue,tab_opend_path);
+  let  path = await window.api.saveFile(saveValue, filepath);
 
     for (const tab of document.querySelectorAll(".tab")){
       const textContent = tab.dataset.fullpath;
-      if(textContent === tab_opend_path){
+      if(textContent === filepath){
         tab.innerHTML = `<div id="tab_name" style="display: inline-block;">${window.requires.path.basename(path.replaceAll("\\", "/"))}</div><button class='delete'>X</button>`;
         tab.querySelector("button").onclick = delete_tab;
         path = path.replaceAll("\\", "/");
@@ -1046,13 +1042,13 @@ async function saveFile(saveValue) {
     };
     const temp = text_list[tab_opend_path];
     text_list[path] = temp;
-    tab_widths[path] = tab_widths[tab_opend_path];
+    tab_widths[path] = tab_widths[filepath];
     last_saves[path] = temp;
-    if(tab_opend_path !== path){
-      remove_tab_info(tab_opend_path);
+    if(filepath !== path){
+      remove_tab_info(filepath);
     }
     get_focus(path);
-    AutoLearning(txt_editor.session.getValue());
+    AutoLearning(editor_dict[filepath].session.getValue());
 }
 function getSettings(key) {
   return  JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/settings.json', 'utf8'))[key];

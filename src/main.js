@@ -347,7 +347,7 @@ function pyright_check(currentPath){
     ipcMain.handle('delete_local_shk', (event, key) => { 
         localShortcut.unregister(mainWindow, key);
     });
-  
+    sessions = {};
   
     ipcMain.handle('create_process_shell', (event, process, pname) => { 
         console.log(process)
@@ -373,11 +373,18 @@ function pyright_check(currentPath){
             dir.on('exit', (code) => {
                 mainWindow.webContents.send(`child_process_session::${pname}`,{"name":pname,"type":"exit","data":code});
             });
-            ipcMain.handle(`child_process_session_stdin::${pname}`, (event ,msg ) => {
-                console.log(msg)
-                dir.stdin.write(msg);
+            // dir.stdin.end();
+            // dir.stdin.start();
+            if(sessions[pname] === undefined){
                 
-          })})();})
+                ipcMain.handle(`child_process_session_stdin::${pname}`, (event ,msg ) => {
+                    console.log(msg)
+                    sessions[pname].stdin.write(msg);
+                  })    
+            }
+            sessions[pname] = dir;
+            
+        })();})
   
 
 // function logPosition(event) {			console.log("screenX: " + event.screenX);			console.log("screenY: " + event.screenY);		}

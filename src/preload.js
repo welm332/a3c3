@@ -57,6 +57,7 @@ contextBridge.exposeInMainWorld(
         shortcut_path:require('windows-shortcuts-ps'),
         Encoding: require('encoding-japanese'),
         iconv:require("iconv-lite"),
+        platform:process.platform
     
         // lang:require("../node_modules/ace-builds/src/ext-language_tools.js")
         // util:require("C:/Users/taiki/Desktop/program/portfolio/150819_electron_text_editor/node_modules/ace-builds/demo/kitchen-sink/autocomplete/util")
