@@ -74,5 +74,41 @@
 		"update": {
 			"if": null
 		}
+	},
+	"flask.Flask, request, render_template,redirect": {
+		"name": "flask.Flask, request, render_template,redirect",
+		"code": "from flask import Flask, request, render_template,redirect\n",
+		"replace": "import flask\n",
+		"sule": [
+			"from flask import [^(\\r\\n)]*Flask, request, render_template,redirect"
+		],
+		"update": {
+			"if": "from flask import",
+			"add": "Flask, request, render_template,redirect"
+		}
+	},
+	"flask.": {
+		"name": "flask.",
+		"code": "import flask\n",
+		"replace": "",
+		"sule": [
+			"from flask",
+			"import flask"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"flask.Flask, request, render_template,redirect,Response": {
+		"name": "flask.Flask, request, render_template,redirect,Response",
+		"code": "from flask import Flask, request, render_template,redirect,Response\n",
+		"replace": "import flask\n",
+		"sule": [
+			"from flask import [^(\\r\\n)]*Flask, request, render_template,redirect,Response"
+		],
+		"update": {
+			"if": "from flask import",
+			"add": "Flask, request, render_template,redirect,Response"
+		}
 	}
 }

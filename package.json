@@ -11,7 +11,7 @@
 			"**/*"
 		],
 		"directories": {
-			"output": "C:\\Users\\taiki\\Desktop\\program\\portfolio\\150819_electron_text_editor\\installer"
+			"output": "C:\\Users\\taiki\\Desktop\\program\\portfolio\\150819_electron_text_editor\\dist"
 		},
 		"win": {
 			"icon": "a3c3.png"
@@ -25,7 +25,8 @@
 		"build:inst:mac": "electron-builder   -m --x64",
 		"build:inst:linux": "electron-builder   -l --x64",
 		"pack": "electron-builder --dir",
-		"dist": "electron-builder"
+		"dist": "electron-builder",
+		"extensions": "node scripts/extensions.js"
 	},
 	"devDependencies": {
 		"electron": "^15.3.0",
@@ -41,6 +42,7 @@
 		"electron-winstaller": "^5.0.0",
 		"encoding-japanese": "^1.0.30",
 		"fs": "^0.0.1-security",
+		"fs-extra": "^10.0.0",
 		"iconv-lite": "^0.6.3",
 		"pyright": "^1.1.162",
 		"sudo-prompt": "^9.2.1",

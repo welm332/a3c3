@@ -292,8 +292,8 @@ function connect_remote(){
                 file = file.replaceAll(command_dict["replace"]["before"], command_dict["replace"]["after"]);
             }
             let command = command_dict["command"] ;
-            command = command.replaceAll("%fullpath%",fullpath);
-            command = command.replaceAll("%file%",file);
+            command = command.replaceAll("%fullpath%", fullpath);
+            command = command.replaceAll("%file%", file);
             
             if(command_dict["sudo"]){
                 window.requires.sudo_exe.exec(command,{'shell':'powershell.exe'},(errs,stdout,stderr)=>{})
@@ -332,7 +332,7 @@ function import_insert(com_dict,text){
     //     print(com_dict["sule"])
           if(com_dict["name"].indexOf(".")+1 != com_dict["name"].length){
             text = txt_editor.session.getValue().replace(com_dict["name"], com_dict["name"].substring(com_dict["name"].indexOf(".")+1))
-            txt_editor.session.setValue(text);
+            txt_editor.session.doc.setValue(text);
             txt_editor.clearSelection();
             txt_editor.moveCursorToPosition(postionToIdnex(text,text.length));
           }
@@ -364,7 +364,7 @@ function import_insert(com_dict,text){
         }
         let command_index = indexToPosition(text, txt_editor.getCursorPosition())+1;
         text = txt_editor.session.getValue().replace(com_dict["name"], com_dict["name"].substring(com_dict["name"].indexOf(".")+1))
-        txt_editor.setValue(text);
+        txt_editor.session.doc.setValue(text);
         txt_editor.clearSelection();
         txt_editor.moveCursorToPosition(postionToIdnex(text,text.length));
         
@@ -398,7 +398,7 @@ function import_insert(com_dict,text){
       cursor_pos = postionToIdnex(insert_text, insert_text.indexOf("%curpos%")-1);
       insert_text = insert_text.replace("%curpos%", com_dict["curpos_replace"]["txt"]);
       if(com_dict["curpos_replace"]["focused"]){
-          txt_editor.session.setValue(insert_text);
+          txt_editor.session.doc.setValue(insert_text);
           txt_editor.clearSelection();
           const range = new ace.Range(
             cursor_pos.row,
@@ -416,7 +416,7 @@ function import_insert(com_dict,text){
       }
     }
     else{
-      txt_editor.session.setValue(insert_text);
+      txt_editor.session.doc.setValue(insert_text);
       txt_editor.clearSelection();
     }
     txt_editor.moveCursorToPosition(cursor_pos);
@@ -1117,7 +1117,7 @@ async function open_args(){
         cust_onchange_off();
         const dict = JSON.parse(fs.readFileSync(backup_file, "utf8"));
         for(const key of Object.keys(dict)){
-             editor_dict[key].session.setValue(dict[key]["writeend"]);
+             editor_dict[key].session.doc.setValue(dict[key]["writeend"]);
               }
             cust_onchange_on();
         }
@@ -1284,7 +1284,7 @@ function readFile(path, replacement = tab_opend_path) {
   last_saves[path] = text;
   text_list[path] = text;
   cust_onchange_off();
-  editor_dict[path].session.setValue(text);
+  editor_dict[path].session.doc.setValue(text);
   cust_onchange_on();
   if(document.querySelectorAll(".tab").length === 1){
     get_focus(path.replaceAll("\\", "/"))
@@ -1293,7 +1293,3 @@ function readFile(path, replacement = tab_opend_path) {
     // txt_editor.session.setValue(text, -1);
   }
 };
-
-
-
-

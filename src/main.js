@@ -352,7 +352,7 @@ function pyright_check(currentPath){
     ipcMain.handle('create_process_shell', (event, process, pname) => { 
         console.log(process)
         const spawnTest = (() => {
-            const dir = require("child_process").spawn(process, {shell: true});       // <== shell: true option
+            const dir = require("child_process").spawn(process);       // <== shell: true option
             dir.stdout.on('data', (data) => {
                 mainWindow.webContents.send(`child_process_session::${pname}`,{"name":pname,"type":"out","data":data});
               console.log(`spawn stdout: ${data}`);
@@ -373,7 +373,7 @@ function pyright_check(currentPath){
             dir.on('exit', (code) => {
                 mainWindow.webContents.send(`child_process_session::${pname}`,{"name":pname,"type":"exit","data":code});
             });
-            // dir.stdin.end();
+            // dir.stdin.cork();
             // dir.stdin.start();
             if(sessions[pname] === undefined){
                 
