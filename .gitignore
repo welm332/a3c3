@@ -4,5 +4,5 @@ test/
 dist/
 python/
 attack/
-/extends/
+/extends/*
 !/extends/extenders
