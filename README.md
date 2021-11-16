@@ -17,13 +17,21 @@ python用のエディター
     * easy shortcut commands
     * remote sending commands
     * palette Commands 
-
+    
+#  extentions
+    #before Build
+    #pwd
+    #hogehoge/a3c3
+    #if you want to all extentions
+        * git clone https://github.com/welm332/extends.git
+    #you want you extention name
+        * yarn run extensions intall [extention name]
+    
 # Build
-    1:(yarn | npm)  install
-    2:(yarn | npx) run install
+    yarn install
 # Usage
-    1:(yarn | npm)  install
-    if no build:
-        2:(yarn | npx) run start (files)
-    else:
-        a3c3  (files)
+    yarn  install
+    #if no build:
+        yarn run start
+    #else:
+        a3c3
