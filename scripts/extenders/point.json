@@ -1,0 +1,5 @@
+{
+    "load":[
+        {"type":"script", "attr":{"src":"%dirname%/install_extend.js"}}
+    ]
+}
