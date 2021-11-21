@@ -243,6 +243,7 @@ function create_search_window(){//検索窓の作成
   div.appendChild(button_em);
 
   document.body.appendChild(div);
+  txt_em.focus()
 };
 function editor_write(commandLists){
   cust_onchange_off();

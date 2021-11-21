@@ -110,5 +110,101 @@
 			"if": "from flask import",
 			"add": "Flask, request, render_template,redirect,Response"
 		}
+	},
+	"PIL.Image": {
+		"name": "PIL.Image",
+		"code": "from PIL import Image\n",
+		"replace": "import PIL\n",
+		"sule": [
+			"from PIL import [^(\\r\\n)]*Image"
+		],
+		"update": {
+			"if": "from PIL import",
+			"add": "Image"
+		}
+	},
+	"PIL.": {
+		"name": "PIL.",
+		"code": "import PIL\n",
+		"replace": "",
+		"sule": [
+			"from PIL",
+			"import PIL"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"sys.": {
+		"name": "sys.",
+		"code": "import sys\n",
+		"replace": "",
+		"sule": [
+			"from sys",
+			"import sys"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"pyocr.": {
+		"name": "pyocr.",
+		"code": "import pyocr\n",
+		"replace": "",
+		"sule": [
+			"from pyocr",
+			"import pyocr"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"pyocr.builders.": {
+		"name": "pyocr.builders.",
+		"code": "import pyocr.builders\n",
+		"replace": "",
+		"sule": [
+			"from pyocr.builders",
+			"import pyocr.builders"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"csv.": {
+		"name": "csv.",
+		"code": "import csv\n",
+		"replace": "",
+		"sule": [
+			"from csv",
+			"import csv"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"(.": {
+		"name": "(.",
+		"code": "import (\n",
+		"replace": "",
+		"sule": [
+			"from (",
+			"import ("
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"\"fmt\".": {
+		"name": "\"fmt\".",
+		"code": "import \"fmt\"\n",
+		"replace": "",
+		"sule": [
+			"from \"fmt\"",
+			"import \"fmt\""
+		],
+		"update": {
+			"if": null
+		}
 	}
 }
