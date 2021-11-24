@@ -22,14 +22,14 @@ function extensions(...arg){
                 break;
         }
         case "list":{
+            result ='\u001b[32m'+"repo:https://raw.githubusercontent.com/welm332/extends/main/"+'\u001b[0m' + (extension_dict["install"]).map((em)=>"\n\t"+em["name"]).join("");
             if(options[0] === "-lo"){
-                console.log('\u001b[32m'+"repo:"+require("path").join(__dirname+"/../extends/")+'\u001b[0m')
-                console.log("\n\t"+fs.readdirSync(__dirname+"/../extends/").filter((em)=>fs.statSync(__dirname+"/../extends/"+em).isDirectory()).join("\n\t"));
-                break;
+                // console.log('\u001b[32m'+"repo:"+require("path").join(__dirname+"/../extends/")+'\u001b[0m')
+                result = '\u001b[32m'+"repo:"+require("path").join(__dirname+"/../extends/")+'\u001b[0m'+"\n\t"+fs.readdirSync(__dirname+"/../extends/").filter((em)=>fs.statSync(__dirname+"/../extends/"+em).isDirectory()).join("\n\t")
             }
-            console.log('\u001b[32m'+"repo:https://raw.githubusercontent.com/welm332/extends/main/"+'\u001b[0m')
-            console.log((extension_dict["install"]).map((em)=>"\n\t"+em["name"]).join(""));
-            break;
+            console.log(result);
+            return result;
+            // break;
         }
         case "install":{
             const target = extension_dict["install"].filter((em)=>em["name"] === options[0])

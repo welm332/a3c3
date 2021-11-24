@@ -215,23 +215,14 @@ function create_search_window(){//検索窓の作成
     
     datalist.appendChild(option);
   }
-  
+  while(document.getElementById("datalist").firstChild){
+      document.getElementById("datalist").removeChild(document.getElementById("datalist").firstChild)
+  }
     document.getElementById("datalist").appendChild(datalist);
   
   let txt_em = document.createElement('input');
   txt_em.type = "text";
-  
-  txt_em.setAttribute("list", "commandLists");
-  txt_em.onkeypress=
-    function (event) {
-      if (event.key === "Enter") {
-          const key = event.target.value;
-          if(palette_commands[key] !== undefined){
-              eval(palette_commands[key]);
-              event.target.parentElement.remove();
-          }
-    }  
-  }
+
 
   let button_em = document.createElement('button');
   button_em.innerHTML = "X";
@@ -243,7 +234,8 @@ function create_search_window(){//検索窓の作成
   div.appendChild(button_em);
 
   document.body.appendChild(div);
-  txt_em.focus()
+  txt_em.focus();
+  return txt_em
 };
 function editor_write(commandLists){
   cust_onchange_off();

@@ -206,5 +206,125 @@
 		"update": {
 			"if": null
 		}
+	},
+	"wx.": {
+		"name": "wx.",
+		"code": "import wx\n",
+		"replace": "",
+		"sule": [
+			"from wx",
+			"import wx"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"threading.": {
+		"name": "threading.",
+		"code": "import threading\n",
+		"replace": "",
+		"sule": [
+			"from threading",
+			"import threading"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"wx.adv.": {
+		"name": "wx.adv.",
+		"code": "import wx.adv\n",
+		"replace": "",
+		"sule": [
+			"from wx.adv",
+			"import wx.adv"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"wx.core.KeyEvent, NewId, SL_AUTOTICKS, SL_LABELS": {
+		"name": "wx.core.KeyEvent, NewId, SL_AUTOTICKS, SL_LABELS",
+		"code": "from wx.core import KeyEvent, NewId, SL_AUTOTICKS, SL_LABELS\n",
+		"replace": "import wx.core\n",
+		"sule": [
+			"from wx.core import [^(\\r\\n)]*KeyEvent, NewId, SL_AUTOTICKS, SL_LABELS"
+		],
+		"update": {
+			"if": "from wx.core import",
+			"add": "KeyEvent, NewId, SL_AUTOTICKS, SL_LABELS"
+		}
+	},
+	"wx.core.": {
+		"name": "wx.core.",
+		"code": "import wx.core\n",
+		"replace": "",
+		"sule": [
+			"from wx.core",
+			"import wx.core"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"wx.richtext.RichTextCtrl": {
+		"name": "wx.richtext.RichTextCtrl",
+		"code": "from wx.richtext import RichTextCtrl\n",
+		"replace": "import wx.richtext\n",
+		"sule": [
+			"from wx.richtext import [^(\\r\\n)]*RichTextCtrl"
+		],
+		"update": {
+			"if": "from wx.richtext import",
+			"add": "RichTextCtrl"
+		}
+	},
+	"wx.richtext.": {
+		"name": "wx.richtext.",
+		"code": "import wx.richtext\n",
+		"replace": "",
+		"sule": [
+			"from wx.richtext",
+			"import wx.richtext"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"PIL.ImageGrab, Image": {
+		"name": "PIL.ImageGrab, Image",
+		"code": "from PIL import ImageGrab, Image\n",
+		"replace": "import PIL\n",
+		"sule": [
+			"from PIL import [^(\\r\\n)]*ImageGrab, Image"
+		],
+		"update": {
+			"if": "from PIL import",
+			"add": "ImageGrab, Image"
+		}
+	},
+	"re.": {
+		"name": "re.",
+		"code": "import re\n",
+		"replace": "",
+		"sule": [
+			"from re",
+			"import re"
+		],
+		"update": {
+			"if": null
+		}
+	},
+	"checkUrl.": {
+		"name": "checkUrl.",
+		"code": "import checkUrl\n",
+		"replace": "",
+		"sule": [
+			"from checkUrl",
+			"import checkUrl"
+		],
+		"update": {
+			"if": null
+		}
 	}
 }
