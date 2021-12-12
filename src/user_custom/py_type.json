@@ -6,5 +6,7 @@
 	"dict": "\\{.*\\}",
 	"//localhost/sosuu\", data": ".*?\\)",
 	"<input name": ".*?\\)",
-	"XXXXXXXXXXXXXXXX</div>' if result": ".*?\\)"
+	"XXXXXXXXXXXXXXXX</div>' if result": ".*?\\)",
+	"//www.google.co.jp/search?hl": ".*?\\)",
+	"list[str]": "re.findall\\(.*?\\)"
 }

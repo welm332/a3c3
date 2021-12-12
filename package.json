@@ -26,7 +26,8 @@
 		"build:inst:linux": "electron-builder   -l --x64",
 		"pack": "electron-builder --dir",
 		"dist": "electron-builder",
-		"extensions": "node scripts/extensions.js"
+		"extensions": "node scripts/extensions.js",
+		"pystart":"electron python/main.js"
 	},
 	"devDependencies": {
 		"electron": "^15.3.0",

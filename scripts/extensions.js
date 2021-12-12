@@ -2,6 +2,8 @@
 function extensions(...arg){
     operation = arg[0];
     options = arg.slice(1);
+    console.log(operation)
+    console.log(options)
     const baseurl = "https://raw.githubusercontent.com/welm332/extends/main/";
     const fs = require("fs");
     iconv = require("iconv-lite");
@@ -76,6 +78,7 @@ function extensions(...arg){
 }
 // 実行元の特定
 if (typeof module !== 'undefined' && !module.parent) {
+    console.log("yes")
     extensions(...process.argv.slice(2));
 } else {
     exports["extensions"] = extensions;

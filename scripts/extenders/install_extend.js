@@ -1,8 +1,8 @@
 window.addEventListener('DOMContentLoaded', ()=>{
-    palette_commands["intall Extensions"] = "open_install_page()";//`tab=create_tab();loadhtml(document.querySelector(".editor[data-fullpath='"+tab.dataset.fullpath+"']"), "/../extends/webviewer/web.html");tab.querySelector("#tab_name").textContent = "Browser"`;
+    palette_commands["install Extensions"] = "open_install_page()";//`tab=create_tab();loadhtml(document.querySelector(".editor[data-fullpath='"+tab.dataset.fullpath+"']"), "/../extends/webviewer/web.html");tab.querySelector("#tab_name").textContent = "Browser"`;
 });
 if(palette_commands !== null){
-    palette_commands["intall Extensions"] = "open_install_page()";//`tab=create_tab();loadhtml(document.querySelector(".editor[data-fullpath='"+tab.dataset.fullpath+"']"), "/../extends/webviewer/web.html");tab.querySelector("#tab_name").textContent = "Browser"`;
+    palette_commands["install Extensions"] = "open_install_page()";//`tab=create_tab();loadhtml(document.querySelector(".editor[data-fullpath='"+tab.dataset.fullpath+"']"), "/../extends/webviewer/web.html");tab.querySelector("#tab_name").textContent = "Browser"`;
 }
 // function extentions_bt(operation){
     
@@ -11,9 +11,9 @@ if(palette_commands !== null){
 function open_install_page(){
     tab=create_tab();
     loadhtml(document.querySelector(".editor[data-fullpath='"+tab.dataset.fullpath+"']"), "/../scripts/extenders/inst_page.html");
-    tab.querySelector("#tab_name").textContent = "intall_page";
+    tab.querySelector("#tab_name").textContent = "install_page";
     const extensions = JSON.parse(window.requires.iconv.decode(window.requires.exe.execSync("curl https://raw.githubusercontent.com/welm332/extends/main/install.json"), "utf-8"));
-    parent = document.querySelector("#intallers");
+    parent = document.querySelector("#installers");
     for(em of extensions["install"]){
         const extension = document.createElement("div");
         const name = document.createElement("div");
