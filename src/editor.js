@@ -790,11 +790,11 @@ window.api.on("file_change", (event,path)=>{
 });
 
 window.api.on("file_delete", (event,path)=>{
-    document.querySelector(`.tab[data-fullpath="${path.replaceAll('\\','/').toLocaleLowerCase()}"]`).textContent = window.requires.path.basename(path)+"(削除済み)";
+    document.querySelector(`.tab[data-fullpath="${path.replaceAll('\\','/')}"]`).textContent = window.requires.path.basename(path)+"(削除済み)";
     let button_em = document.createElement('button');
     button_em.innerHTML = "X";
     button_em.onclick = delete_tab;
-    document.querySelector(`.tab[data-fullpath="${path.replaceAll('\\','/').toLocaleLowerCase()}"]`).appendChild(button_em);
+    document.querySelector(`.tab[data-fullpath="${path.replaceAll('\\','/')}"]`).appendChild(button_em);
 });
 
 window.api.on("open_new_file", function(event,path){
@@ -967,7 +967,6 @@ function get_type(val){
 return false;
 }
 function get_focus(textContent){
-  textContent = textContent.toLowerCase();
   textContent = textContent.replaceAll("\\", "/");
   tab_opend_path = textContent;
   txt_editor = editor_dict[tab_opend_path];
@@ -1235,8 +1234,6 @@ function onLoad() {
   });
 }
 function readFile(path, replacement = tab_opend_path) {
-  path = path.toLowerCase() ;
-  replacement = replacement.toLocaleLowerCase();
   const editor = document.querySelector(`.editor[data-fullpath="${replacement}"]`);
   path = path.replaceAll("\\", "/");
   editor.dataset.fullpath = path;
