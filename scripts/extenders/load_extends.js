@@ -1,6 +1,6 @@
 async function getloads(auto_reader=false){
     const dirname = window.requires.dirname;
-    const extends_path = dirname+"/../extends";
+    const extends_path = user_custom_path+"/../extends";
     const fs = window.requires.fs;
     let extenders = fs.readdirSync(extends_path);
     const deletes = [".git", ".gitignore", "remote","install.json"];

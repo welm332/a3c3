@@ -49,6 +49,7 @@ contextBridge.exposeInMainWorld(
         electron_cmds:clipboard,
         cs:contextBridge,
         dirname:__dirname,
+        isDev:require('electron-is-dev'),
         fs: require('fs'),
         exe: require("child_process"),
         sudo_exe:require("sudo-prompt"),

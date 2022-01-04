@@ -58,7 +58,7 @@ function open_install_page(){
         extension.appendChild(buttons);
         parent.appendChild(extension);
         // 拡張機能をすでに取り込んでるなら
-        if(fs.readdirSync(window.requires.dirname+"/../extends/").indexOf(em["name"]) !== -1){
+        if(fs.readdirSync(user_custom_path+"/../extends/").indexOf(em["name"]) !== -1){
                 buttons.querySelector(".noExsits").style.display = "none";
             }else{
                 for(const em of buttons.querySelectorAll(".exsits")){

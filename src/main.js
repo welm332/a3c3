@@ -223,10 +223,15 @@ function onload(){
   
   async function isDirs(event, args){
     dirFlagList = [];
-    for(const pathName of args){
-        dirFlagList.push(fs.statSync(pathName).isDirectory());
+    try{
+        for(const pathName of args){
+            dirFlagList.push(fs.statSync(pathName).isDirectory());
+        }
+        return dirFlagList;
     }
-    return dirFlagList;
+    catch{
+        return [...Array(args.length)].map((_) => false);
+    }
 }
   
   ipcMain.handle("isDirs", isDirs);

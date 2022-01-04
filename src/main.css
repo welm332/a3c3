@@ -62,11 +62,18 @@ dialog {
   display: inline-block;
   _display: inline;
   padding: 3px;
-  border: 3px outset purple;
+  /*border: 3px outset purple;*/
   ser-select: none; /* CSS3 */
   -moz-user-select: none; /* Firefox */
   -webkit-user-select: none; /* Safari、Chromeなど */
   -ms-user-select: none; /* IE10かららしい */
+}
+.tab[data-focused="1"]{
+    /*color: blue;*/
+    border : 3px outset blue
+}
+.tab[data-focused="0"]{
+    border : 3px outset purple;
 }
 .tab > button:not(.border-radius){
   background-color: #1e1e1e;

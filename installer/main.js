@@ -59,8 +59,12 @@ function onload(){
       const path_writer = require("../scripts/path_writer")
       
     // //   return
-      exec(`yarn run pack  `,(a,b,c)=>{
-          BrowserWindow.getFocusedWindow().webContents.send('install Done');
+      exec(`yarn run pack `,(a,b,c)=>{
+          console.log(a);
+          console.log(b);
+          console.log(c);
+            BrowserWindow.getFocusedWindow().webContents.send('install Done');
+          
       });
       if(checked){
          path_writer.add_env("path", `${path}\\win-unpacked`);

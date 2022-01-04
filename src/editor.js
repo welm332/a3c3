@@ -21,6 +21,8 @@ let onctrl = false;
 let isOwnSaved = false;
 var chileds;
 let palette_commands = null; 
+const user_custom_path = window.requires.dirname + (window.requires.isDev ? "": "../../../src");
+console.log(get_path(user_custom_path));
 const file_change_methods  = {};
     
 function close_saving(){
@@ -273,7 +275,7 @@ function connect_remote(){
     const status = tab.dataset.status;
     if(status !== undefined && status.indexOf("remote:") !== -1){
         const command_key = status.substring(7);
-        const remote_commands = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/remote.json', 'utf8'));
+        const remote_commands = JSON.parse(fs.readFileSync(user_custom_path +'/user_custom/remote.json', 'utf8'));
         const command_dict = remote_commands[command_key];
         
         if(command_dict !== undefined){
@@ -667,7 +669,7 @@ function AutoLearning(data){
             const value = mean_type[1].trim(); 
             if(Object.keys(py_typers).indexOf(type) === -1){
                 py_typers[type] = (value.substring(0,value.indexOf("(")+1)).replaceAll("(","\\(")+".*?\\)";
-                fs.writeFileSync(window.requires.dirname+"/user_custom/py_type.json", JSON.stringify(py_typers, null, "\t"));
+                fs.writeFileSync(user_custom_path+"/user_custom/py_type.json", JSON.stringify(py_typers, null, "\t"));
             }
         }
         
@@ -770,7 +772,7 @@ function AutoLearning(data){
       }
     }
   }
-  fs.writeFile(window.requires.dirname+"/user_custom/py.json", JSON.stringify(py_imports, null, "\t"), (error) => {
+  fs.writeFile(user_custom_path+"/user_custom/py.json", JSON.stringify(py_imports, null, "\t"), (error) => {
     if (error != null) {
       alert('error : ' + error);
     }
@@ -989,11 +991,12 @@ function get_focus(textContent){
   // フォーカスが当たってるときのタブを紫に変更
   for (const tab of document.querySelectorAll(".tab")){
     const textContent = tab.dataset.fullpath;
-    let color = "purple";
+    let focused_flag = "0";
     if(textContent === tab_opend_path){
-      color ="blue";
+      focused_flag = "1";
     }
-    tab.style.border= ` 3px outset ${color}`;
+    // tab.style.border= ` 3px outset ${color}`;
+    tab.dataset.focused = focused_flag;
   }
   cust_onchange_on();
 }
@@ -1043,16 +1046,16 @@ async function saveFile(saveValue, filepath=tab_opend_path) {
     AutoLearning(editor_dict[filepath].session.getValue());
 }
 function getSettings(key) {
-  return  JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/settings.json', 'utf8'))[key];
+  return  JSON.parse(fs.readFileSync(user_custom_path +'/user_custom/settings.json', 'utf8'))[key];
 
 }
 async function open_args(){
     let args = await window.api.get_args();
     const custom_list = {
-      "import":window.requires.dirname+"/user_custom/py.json",
-      "type":window.requires.dirname+'/user_custom/py_type.json',
-      "shortcut":window.requires.dirname+'/user_custom/shortcut.jsonc',
-      "settings":window.requires.dirname+"/user_custom/settings.json"
+      "import":user_custom_path +"/user_custom/py.json",
+      "type":user_custom_path +'/user_custom/py_type.json',
+      "shortcut":user_custom_path +'/user_custom/shortcut.jsonc',
+      "settings":user_custom_path +"/user_custom/settings.json"
       };
     debugMode = args["Debugflag"];
     if(debugMode){
@@ -1157,31 +1160,31 @@ function onLoad() {
     }
 }
     fs = window.requires.fs;
-    py_imports = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/py.json', 'utf8'));
+    py_imports = JSON.parse(fs.readFileSync(user_custom_path+'/user_custom/py.json', 'utf8'));
     
-    window.api.chokidar_path_add(window.requires.dirname+'/user_custom/py.json');
+    window.api.chokidar_path_add(user_custom_path+'/user_custom/py.json');
     file_change_methods[window.requires.dirname.replaceAll("\\", "/")+'/user_custom/py.json'] = (path)=>{
         py_imports = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/py.json', 'utf8'));
     }
     
 
-    py_typers = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/py_type.json', 'utf8'));
-    window.api.chokidar_path_add(window.requires.dirname+'/user_custom/py_type.json');
-    file_change_methods[window.requires.dirname.replaceAll("\\", "/")+'/user_custom/py_type.json'] = (path)=>{
-        py_typers = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/py_type.json', 'utf8'));
+    py_typers = JSON.parse(fs.readFileSync(user_custom_path+'/user_custom/py_type.json', 'utf8'));
+    window.api.chokidar_path_add(user_custom_path+'/user_custom/py_type.json');
+    file_change_methods[user_custom_path.replaceAll("\\", "/")+'/user_custom/py_type.json'] = (path)=>{
+        py_typers = JSON.parse(fs.readFileSync(user_custom_path+'/user_custom/py_type.json', 'utf8'));
     }
     
     
-    palette_commands = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/palette_commands.json', 'utf8'));
+    palette_commands = JSON.parse(fs.readFileSync(user_custom_path+'/user_custom/palette_commands.json', 'utf8'));
     
-    window.api.chokidar_path_add(window.requires.dirname+'/user_custom/palette_commands.json');
-    file_change_methods[window.requires.dirname.replaceAll("\\", "/")+'/user_custom/palette_commands.json'] = (path)=>{
-        palette_commands = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/palette_commands.json', 'utf8'));
+    window.api.chokidar_path_add(user_custom_path+'/user_custom/palette_commands.json');
+    file_change_methods[user_custom_path.replaceAll("\\", "/")+'/user_custom/palette_commands.json'] = (path)=>{
+        palette_commands = JSON.parse(fs.readFileSync(user_custom_path+'/user_custom/palette_commands.json', 'utf8'));
     }
     open_args();
     // shorthcut 作成 デバッグモードでは使用しないよう
     if(debugMode === false){
-      let shortcut = JSON.parse(fs.readFileSync(window.requires.dirname+'/user_custom/shortcut.jsonc', 'utf8'));
+      let shortcut = JSON.parse(fs.readFileSync(user_custom_path+'/user_custom/shortcut.jsonc', 'utf8'));
       for(const key of Object.keys(shortcut)){
         window.api.create_local_shk(key);
         window.api.on(key,()=>{

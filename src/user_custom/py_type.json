@@ -3,10 +3,5 @@
 	"str": "\".*\"",
 	"float": "^-?[0-9]+\\.[0-9]+$",
 	"list": "\\[.*\\]$",
-	"dict": "\\{.*\\}",
-	"//localhost/sosuu\", data": ".*?\\)",
-	"<input name": ".*?\\)",
-	"XXXXXXXXXXXXXXXX</div>' if result": ".*?\\)",
-	"//www.google.co.jp/search?hl": ".*?\\)",
-	"list[str]": "re.findall\\(.*?\\)"
+	"dict": "\\{.*\\}"
 }

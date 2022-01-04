@@ -35,7 +35,7 @@ function extensions(...arg){
         }
         case "install":{
             const target = extension_dict["install"].filter((em)=>em["name"] === options[0])
-            extends_path = __dirname+"/../extends/";
+            extends_path = (__dirname+(require('electron-is-dev') ? "": "../../../src"))+"/../extends/";
             if (target.length === 1){
                 console.log(extends_path+target[0]["name"]);
                 console.log(fs.existsSync(extends_path+target[0]["name"]))
@@ -56,7 +56,7 @@ function extensions(...arg){
             break;
         }
         case "uninstall":{
-            extends_path = __dirname+"/../extends/";
+            extends_path = (__dirname+(require('electron-is-dev') ? "": "../../../src"))+"/../extends/";
             if(fs.existsSync(extends_path+options[0])){
                 require("fs-extra").removeSync(extends_path+options[0]);
                 }

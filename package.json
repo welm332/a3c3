@@ -11,11 +11,15 @@
 			"**/*"
 		],
 		"directories": {
-			"output": "C:\\Users\\taiki\\Desktop\\program\\portfolio\\150819_electron_text_editor\\dist"
+			"output": "C:\\Users\\taiki\\Downloads"
 		},
 		"win": {
 			"icon": "a3c3.png"
-		}
+		},
+		"extraResources": [
+			"extends/**/*",
+			"src/user_custom/*"
+		]
 	},
 	"scripts": {
 		"start": "electron .",
@@ -27,7 +31,7 @@
 		"pack": "electron-builder --dir",
 		"dist": "electron-builder",
 		"extensions": "node scripts/extensions.js",
-		"pystart":"electron python/main.js"
+		"pystart": "electron python/main.js"
 	},
 	"devDependencies": {
 		"electron": "^15.3.0",
