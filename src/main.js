@@ -287,7 +287,7 @@ function onload(){
       filters: [
         {
           name: 'Documents',
-          extensions: ['py']
+        //   extensions: ['py']
         }
       ]
     },
