@@ -383,8 +383,12 @@ function pyright_check(currentPath){
             if(sessions[pname] === undefined){
                 
                 ipcMain.handle(`child_process_session_stdin::${pname}`, (event ,msg ) => {
-                    console.log(msg)
+                    // console.log(msg)
                     sessions[pname].stdin.write(msg);
+                  })    
+                ipcMain.handle(`child_process_session_kill::${pname}`, (event ,msg ) => {
+                    // console.log(msg)
+                    sessions[pname].kill(msg);
                   })    
             }
             sessions[pname] = dir;

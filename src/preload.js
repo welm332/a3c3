@@ -39,6 +39,10 @@ contextBridge.exposeInMainWorld(
             await ipcRenderer.invoke('create_process_shell',process, name),
         child_process_session_stdin: async(msg,pname)=>
             await ipcRenderer.invoke(`child_process_session_stdin::${pname}`, msg),
+        
+        child_process_session_kill: async(msg,pname)=>
+            await ipcRenderer.invoke(`child_process_session_kill::${pname}`, msg),
+
         env: async(name)=>process.env[name]
             
     },
