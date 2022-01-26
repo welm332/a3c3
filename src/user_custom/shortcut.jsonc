@@ -8,6 +8,8 @@
     "Ctrl+Shift+Q":"txt_editor.showSettingsMenu()",
     "Alt+R":"connect_remote()",
     "Ctrl+Alt+P":"txt_em = create_search_window();txt_em.setAttribute('list', 'commandLists');txt_em.onkeypress=function (event) {if (event.key === 'Enter') {const key = event.target.value;if(palette_commands[key] !== undefined){eval(palette_commands[key]);event.target.parentElement.remove();}}  }",
-    "Ctrl+Shift+S":"play_tab()"
+    "Ctrl+Shift+S":"play_tab()",
+    "Ctrl+Shift+W":"document.querySelector(`.tab[data-fullpath=\"${tab_opend_path}\"]`).querySelector(\"button\").click()"
+
     
 }

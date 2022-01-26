@@ -10,21 +10,21 @@
 		"files": [
 			"**/*"
 		],
-		"directories": {
-			"output": "C:\\Users\\taiki\\Downloads"
-		},
 		"win": {
 			"icon": "a3c3.png"
 		},
 		"extraResources": [
 			"extends/**/*",
 			"src/user_custom/*"
-		]
+		],
+		"directories": {
+			"output": "C:\\Users\\taiki\\Downloads"
+		}
 	},
 	"scripts": {
 		"start": "electron .",
 		"dirtest": "electron . ./src/main.js ./src/ . ./src/editor.js ./Gifs ./installer",
-		"install": "electron installer/main.js",
+		"installer": "electron installer/main.js",
 		"build:inst:win": "electron-builder   -w --x64",
 		"build:inst:mac": "electron-builder   -m --x64",
 		"build:inst:linux": "electron-builder   -l --x64",

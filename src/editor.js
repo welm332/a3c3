@@ -21,7 +21,8 @@ let onctrl = false;
 let isOwnSaved = false;
 var chileds;
 let palette_commands = null; 
-const user_custom_path = window.requires.dirname + (window.requires.isDev ? "": "../../../src");
+const user_custom_path = window.requires.path.join(window.requires.dirname,(window.requires.isDev ? "": "/../../src"));
+const extends_path = window.requires.path.join(window.requires.dirname,(window.requires.isDev ? "/../extends": "/../../extends"));
 console.log(get_path(user_custom_path));
 const file_change_methods  = {};
     
@@ -140,7 +141,7 @@ async function delete_tab(event){
         }
 function loadhtml(element, path){
     ace.edit(element).destroy();
-    const read = window.requires.fs.readFileSync(window.requires.dirname+path, 'utf8');
+    const read = window.requires.fs.readFileSync(path, 'utf8');
     const domparser = new DOMParser();
     const html = domparser.parseFromString(read, "text/html");
 
@@ -161,7 +162,7 @@ function open_setting_page(){
     const em = create_tab();
     const editorpath = `.editor[data-fullpath="${em.dataset.fullpath}"]`;
     const editor = document.querySelector(editorpath);
-    loadhtml(editor, "/setting.html");
+    loadhtml(editor, window.requires.dirname+"/setting.html");
     const settings = Array.from(document.querySelector(editorpath).querySelectorAll("input")).map((v,i)=>[v.name,v.value])
     const button = document.createElement(`button`)
     button.onclick = ()=>{
