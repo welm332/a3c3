@@ -16,10 +16,7 @@
 		"extraResources": [
 			"extends/**/*",
 			"src/user_custom/*"
-		],
-		"directories": {
-			"output": "C:\\Users\\taiki\\Downloads"
-		}
+		]
 	},
 	"scripts": {
 		"start": "electron .",
