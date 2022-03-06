@@ -1,3 +1,9 @@
+loaded_extends_list = []
+function extends_loaded(extName){
+    if (loaded_extends_list.indexOf(extName) === -1){
+        loaded_extends_list.push(extName);
+    }
+}
 async function getloads(auto_reader=false){
     const dirname = window.requires.dirname;
     // const extends_path = user_custom_path+"/../extends";

@@ -17,6 +17,7 @@ const cli = parseArgs(`
       --version    show version
       --userCustom,-c [custom_filename]      customfile open
       --debug,-D        debugMode
+      --topping
 
     Custom_filename
       Partial Match
@@ -204,6 +205,7 @@ function onload(){
     return {
       UserCustom:cli.flags["c"], 
       Debugflag:cli.flags["D"],
+      toppingflag:cli.flags["topping"],
       Others:args
     };
   });
@@ -385,6 +387,7 @@ function pyright_check(currentPath){
                 ipcMain.handle(`child_process_session_stdin::${pname}`, (event ,msg ) => {
                     // console.log(msg)
                     sessions[pname].stdin.write(msg);
+
                   })    
                 ipcMain.handle(`child_process_session_kill::${pname}`, (event ,msg ) => {
                     // console.log(msg)

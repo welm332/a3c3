@@ -2,7 +2,8 @@ Electron Text Editor
 ==
 # Name
 python用のエディター
-以下英語で書いてますが、editor内の表示は現状すべて日本語です。
+editor内の表示は現状すべて日本語です。
+現状windows以外では一部機能しておりません
 
 ***a3c3(auto 3 commands 3)***
 * Auto 3
